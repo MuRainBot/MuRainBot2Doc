@@ -1,0 +1,36 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Trigger server update API
+        run: |
+          set -e  # 在任何命令失败时终止执行
+          
+          # 发送请求并存储响应内容和状态码
+          response=$(curl -s -w "%{http_code}" -X POST https://xiaosu.icu/api/update \
+               -H "api-key: ${{ secrets.SERVER_API_KEY }}" \
+               -H "server: mrb2")
+
+          # 从响应中提取状态码
+          http_code="${response: -3}"  # 取最后三位作为状态码
+          response_body="${response:0:${#response}-3}"  # 去掉状态码，提取响应内容
+
+          echo "Response code: $http_code"
+          echo "Response body: $response_body"
+
+          # 检查状态码
+          if [ "$http_code" -ne 200 ]; then
+              echo "Error: API call failed with status code $http_code"
+              exit 1  # 退出并返回错误状态
+          fi
