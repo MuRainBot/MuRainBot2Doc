@@ -26,5 +26,5 @@ export default defineConfig({
     ]
   },
   cleanUrls: true,
-  base: "mrb2"
+  base: "/mrb2"
 })
