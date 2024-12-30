@@ -25,6 +25,5 @@ export default defineConfig({
       { icon: 'github', link: 'https://github.com/xiaosuyyds/MuRainBot2' }
     ]
   },
-  cleanUrls: true,
-  base: "/mrb2"
+  cleanUrls: true
 })
