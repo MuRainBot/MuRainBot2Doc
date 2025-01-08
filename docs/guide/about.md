@@ -10,4 +10,4 @@
 
 那就好说了，[让我们开始吧！](/guide/getting-started)
 
-***本文档尚在编写中，欢迎各位参与贡献***
+***本文档尚在编写中，欢迎各位[参与贡献](https://github.com/xiaosuyyds/MuRainBot2Doc)***
