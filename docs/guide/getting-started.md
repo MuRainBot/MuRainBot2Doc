@@ -16,11 +16,11 @@
 
 ### 1.1 下载仓库
 ```bash
-git clone https://github.com/xiaosuyyds/MuRainBot2.git
+git clone https://github.com/MuRainBot/MuRainBot2.git
 ```
 ::: tip
 如果不想要使用git也可以下载zip包
-[点击这里](https://codeload.github.com/xiaosuyyds/MuRainBot2/zip/refs/heads/master)
+[点击这里](https://codeload.github.com/MuRainBot/MuRainBot2/zip/refs/heads/master)
 
 下载完毕后，解压到任意位置即可。
 :::

@@ -22,7 +22,7 @@ export default defineConfig({
     ],
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/xiaosuyyds/MuRainBot2' }
+      { icon: 'github', link: 'https://github.com/MuRainBot/MuRainBot2' }
     ]
   },
   cleanUrls: true

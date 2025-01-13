@@ -12,7 +12,7 @@ hero:
       link: /guide/about
     - theme: alt
       text: GitHub
-      link: https://github.com/xiaosuyyds/MuRainBot2
+      link: https://github.com/MuRainBot/MuRainBot2
 
 features:
   - title: 基于Python
