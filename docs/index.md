@@ -41,7 +41,8 @@ features:
 }
 
 .VPImage {
-  -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 70%, rgba(0, 0, 0, 0) 100%);
+  -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 60%, rgba(0, 0, 0, 0) 100%);
+  border-radius: 30px;
 }
 
 @media (min-width: 640px) {
