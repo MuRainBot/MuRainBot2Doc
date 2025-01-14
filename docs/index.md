@@ -26,7 +26,7 @@ features:
     details: "没啥优点<br>你知道的，就正常一个QQBot框架基本该有的功能"
 ---
 <style>
-:root {
+.VPHomeHero {
   --vp-home-hero-name-color: transparent;
   --vp-home-hero-name-background: -webkit-linear-gradient(120deg, rgb(14,190,255) 45%, rgb(255,66,179));
 
@@ -39,13 +39,13 @@ features:
 }
 
 @media (min-width: 640px) {
-  :root {
+  .VPHomeHero {
     --vp-home-hero-image-filter: blur(56px);
   }
 }
 
 @media (min-width: 960px) {
-  :root {
+  .VPHomeHero {
     --vp-home-hero-image-filter: blur(68px);
   }
 }
