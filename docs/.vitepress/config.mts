@@ -23,6 +23,10 @@ export default defineConfig({
 
     socialLinks: [
       { icon: 'github', link: 'https://github.com/MuRainBot/MuRainBot2' }
+    ],
+
+    head: [
+      ['link', { rel: 'icon', href: '/favicon.ico' }]
     ]
   },
   cleanUrls: true
