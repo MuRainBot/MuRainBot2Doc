@@ -31,6 +31,31 @@ features:
     title: 编不下去了……
     details: "没啥优点<br>你知道的，就正常一个QQBot框架基本该有的功能"
 ---
+
+<script setup>
+import { onMounted } from 'vue';
+// Import confetti using import syntax
+import confetti from 'canvas-confetti';
+
+onMounted(() => {
+  if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+    console.log('Canvas confetti module loaded');
+
+    // Trigger confetti
+    confetti({
+      particleCount: 100,
+      spread: 170,
+      origin: { y: 0.6 },
+    });
+    console.log('Confetti triggered');
+  } else {
+    console.log('Not in a browser environment');
+  }
+});
+</script>
+
+<confetti />
+
 <style>
 .VPHomeHero {
   --vp-home-hero-name-color: transparent;
