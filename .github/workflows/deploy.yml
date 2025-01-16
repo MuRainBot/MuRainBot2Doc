@@ -14,23 +14,74 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Trigger server update API
+        id: trigger-api  # 给步骤一个唯一 ID，以便后续步骤引用其输出
         run: |
           set -e  # 在任何命令失败时终止执行
-          
-          # 发送请求并存储响应内容和状态码
-          response=$(curl -s -w "%{http_code}" -X POST https://xiaosu.icu/api/update \
+
+          # 发送初始 POST 请求
+          response=$(curl -s -X POST https://xiaosu.icu/api/update \
                -H "api-key: ${{ secrets.SERVER_API_KEY }}" \
                -H "server: mrb2")
 
-          # 从响应中提取状态码
-          http_code="${response: -3}"  # 取最后三位作为状态码
-          response_body="${response:0:${#response}-3}"  # 去掉状态码，提取响应内容
+          echo "Initial Response: $response"
 
-          echo "Response code: $http_code"
-          echo "Response body: $response_body"
-
-          # 检查状态码
-          if [ "$http_code" -ne 200 ]; then
-              echo "Error: API call failed with status code $http_code"
-              exit 1  # 退出并返回错误状态
+          # 提取 success 和 id
+          success=$(echo "$response" | jq -r '.success')
+          if [ "$success" != "true" ]; then
+              echo "Error: API call did not succeed."
+              exit 1
           fi
+
+          id=$(echo "$response" | jq -r '.id')
+          if [ -z "$id" ]; then
+              echo "Error: No ID returned from API."
+              exit 1
+          fi
+
+          echo "Update ID: $id"
+
+          # 将 id 写入到 GITHUB_OUTPUT 文件
+          echo "id=$id" >> $GITHUB_OUTPUT
+
+      - name: Poll update status
+        run: |
+          set -e  # 在任何命令失败时终止执行
+
+          # 获取上一步的输出 ID
+          id=${{ steps.trigger-api.outputs.id }}
+          echo "Polling for Update ID: $id"
+
+          # 开始轮询 /api/update/<id>，最多15分钟
+          start_time=$(date +%s)  # 获取当前时间戳
+          timeout=900  # 最大轮询时间为15分钟（900秒）
+
+          while true; do
+              update_response=$(curl -s -X GET https://xiaosu.icu/api/update/$id \
+                   -H "api-key: ${{ secrets.SERVER_API_KEY }}")
+
+              echo "Polling Response: $update_response"
+
+              # 检查 status
+              status=$(echo "$update_response" | jq -r '.status')
+              if [ "$status" != "waiting" ]; then
+                  # 检查 success 字段
+                  success=$(echo "$update_response" | jq -r '.success')
+                  if [ "$success" != "true" ]; then
+                      echo "Error: Update failed. Response indicates success=false."
+                      exit 1
+                  fi
+
+                  echo "Update complete with status: $status"
+                  break
+              fi
+
+              # 检查是否超时
+              current_time=$(date +%s)
+              elapsed_time=$((current_time - start_time))
+              if [ "$elapsed_time" -ge "$timeout" ]; then
+                  echo "Error: Polling timed out after 15 minutes."
+                  exit 1
+              fi
+
+              sleep 1
+          done
