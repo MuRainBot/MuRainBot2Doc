@@ -39,8 +39,6 @@ import confetti from 'canvas-confetti';
 
 onMounted(() => {
   if (typeof window !== 'undefined' && typeof document !== 'undefined') {
-    console.log('Canvas confetti module loaded');
-
     // Trigger confetti
     confetti({
       particleCount: 100,
@@ -48,13 +46,11 @@ onMounted(() => {
       origin: { y: 0.6 },
     });
     console.log('Confetti triggered');
-  } else {
-    console.log('Not in a browser environment');
   }
 });
 </script>
 
-<confetti />
+<Confetti />
 
 <style>
 .VPHomeHero {
