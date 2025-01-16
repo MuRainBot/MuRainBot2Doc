@@ -34,26 +34,101 @@ features:
 <style>
 .VPHomeHero {
   --vp-home-hero-name-color: transparent;
-  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, rgb(14,190,255) 45%, rgb(255,66,179));
-
-  --vp-home-hero-image-background-image: linear-gradient(-45deg, rgb(14,190,255) 50%, rgb(255,66,179) 50%);
+  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, rgb(14, 190, 255) 50%, rgb(255, 66, 179));
+  --vp-home-hero-image-background-image: linear-gradient(-45deg, rgb(14, 190, 255) 50%, rgb(255, 66, 179) 50%);
   --vp-home-hero-image-filter: blur(44px);
+  position: relative;
 }
 
-.VPImage {
+/* 图片样式 */
+.VPImage.image-src {
   -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 60%, rgba(0, 0, 0, 0) 100%);
   border-radius: 30px;
+  transform: translate(-50%, -50%); /* 修正定位基准 */
+  transform-origin: center center; /* 放大基准点为中心 */
+  transition: all 0.3s; /* 平滑过度 */
 }
 
+/* 鼠标悬停时图片放大 */
+.VPImage.image-src:hover {
+  transform: translate(-50%, -50%) scale(1.1); /* 放大时保持居中 */
+  border-radius: 34px;
+}
+
+/* 背景呼吸灯效果 */
+.image-bg {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 150%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(1); /* 初始缩放 */
+  animation: breathe-nonlinear 3s infinite alternate; /* 初始动画 */
+  z-index: -1; /* 确保背景在图片后面 */
+}
+
+@keyframes breathe-nonlinear {
+  0% {
+    transform: translate(-50%, -50%) scale(0.9); /* 初始状态 */
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 0.9;
+  }
+}
+
+.VPImage.image-src:hover ~ .image-bg {
+  transform: translate(-50%, -50%) scale(1.2); /* 背景放大 */
+}
+
+/* 响应式设置 */
 @media (min-width: 640px) {
-  .VPHomeHero {
-    --vp-home-hero-image-filter: blur(56px);
+  .image-bg {
+    filter: blur(56px);
   }
 }
 
 @media (min-width: 960px) {
-  .VPHomeHero {
-    --vp-home-hero-image-filter: blur(68px);
+  .image-bg {
+    filter: blur(68px);
   }
 }
 </style>
+
+<script>
+  // 随机化动画时长和缩放倍数
+  window.addEventListener('DOMContentLoaded', () => {
+    const imageBg = document.querySelector('.image-bg');
+    
+    // 随机设置动画时长 (在 2s 到 5s 之间)
+    const randomDuration = (Math.random() * 3 + 2).toFixed(2) + 's';
+    imageBg.style.animationDuration = randomDuration;
+    
+    // 随机设置动画的关键帧变化
+    const randomScale = (Math.random() * 0.1 + 0.9).toFixed(2);
+    const randomScale2 = (Math.random() * 0.1 + 1.15).toFixed(2);
+    
+    const keyframes = `
+      @keyframes breathe-nonlinear {
+        0% {
+            transform: translate(-50%, -50%) scale(${randomScale}); /* 初始状态 */
+            opacity: 1;
+          }
+          100% {
+            transform: translate(-50%, -50%) scale(${randomScale2});
+            opacity: 0.9;
+          }
+      }
+    `;
+    
+    // 动态注入新的 @keyframes 动画
+    const styleSheet = document.createElement("style");
+    styleSheet.type = "text/css";
+    styleSheet.innerText = keyframes;
+    document.head.appendChild(styleSheet);
+  });
+</script>
+
