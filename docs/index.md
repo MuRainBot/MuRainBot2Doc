@@ -99,36 +99,38 @@ features:
 </style>
 
 <script>
-  // 随机化动画时长和缩放倍数
-  window.addEventListener('DOMContentLoaded', () => {
-    const imageBg = document.querySelector('.image-bg');
-    
-    // 随机设置动画时长 (在 2s 到 5s 之间)
-    const randomDuration = (Math.random() * 3 + 2).toFixed(2) + 's';
-    imageBg.style.animationDuration = randomDuration;
-    
-    // 随机设置动画的关键帧变化
-    const randomScale = (Math.random() * 0.1 + 0.9).toFixed(2);
-    const randomScale2 = (Math.random() * 0.1 + 1.15).toFixed(2);
-    
-    const keyframes = `
-      @keyframes breathe-nonlinear {
-        0% {
-            transform: translate(-50%, -50%) scale(${randomScale}); /* 初始状态 */
-            opacity: 1;
-          }
+  if (typeof window !== "undefined") {
+    // 随机化动画时长和缩放倍数
+    window.addEventListener('DOMContentLoaded', () => {
+      const imageBg = document.querySelector('.image-bg');
+      
+      // 随机设置动画时长 (在 2s 到 5s 之间)
+      const randomDuration = (Math.random() * 3 + 2).toFixed(2) + 's';
+      imageBg.style.animationDuration = randomDuration;
+      
+      // 随机设置动画的关键帧变化
+      const randomScale = (Math.random() * 0.1 + 0.9).toFixed(2);
+      const randomScale2 = (Math.random() * 0.1 + 1.15).toFixed(2);
+      
+      const keyframes = `
+        @keyframes breathe-nonlinear {
+          0% {
+              transform: translate(-50%, -50%) scale(${randomScale}); /* 初始状态 */
+              opacity: 1;
+            }
           100% {
-            transform: translate(-50%, -50%) scale(${randomScale2});
-            opacity: 0.9;
+              transform: translate(-50%, -50%) scale(${randomScale2});
+              opacity: 0.9;
+            }
           }
-      }
-    `;
-    
-    // 动态注入新的 @keyframes 动画
-    const styleSheet = document.createElement("style");
-    styleSheet.type = "text/css";
-    styleSheet.innerText = keyframes;
-    document.head.appendChild(styleSheet);
-  });
+        `;
+        
+      // 动态注入新的 @keyframes 动画
+      const styleSheet = document.createElement("style");
+      styleSheet.type = "text/css";
+      styleSheet.innerText = keyframes;
+      document.head.appendChild(styleSheet);
+    });
+  }
 </script>
 
