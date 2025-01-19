@@ -120,9 +120,7 @@ auto_restart_onebot:  # 在Onebot实现端状态异常时自动重启Onebot实�
 
 根据Lagrange.Onebot的文档，下载编译好的二进制文件即可
 
-随后我们需要将
-
-然后把Lagrange.Onebot的配置文件(`appsettings.json`)中的`Implementations`字段修改为以下内容（此为默认配置，若修改了监听服务器端口，请修改此处端口）:
+随后我们需要将Lagrange.Onebot的配置文件(`appsettings.json`)中的`Implementations`字段修改为以下内容（此为默认配置，若修改了监听服务器端口，请修改此处端口）:
 ```json
 "Implementations": [
         {
