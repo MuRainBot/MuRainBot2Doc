@@ -35,7 +35,7 @@ git clone https://github.com/MuRainBot/MuRainBot2.git
 若python版本不满足要求，可尝试自行搜索教程以更新 python。
 :::
 
-### 1.2.1 使用venv虚拟环境(可选)
+### 1.2.1 使用 venv 虚拟环境(可选)
 为了避免干扰系统的 python 环境，可以使用 venv 虚拟环境来安装依赖。
 
 创建虚拟环境
@@ -107,7 +107,7 @@ auto_restart_onebot:  # 在Onebot实现端状态异常时自动重启Onebot实�
 
 其余配置项默认配置一般就可以满足普通需求，如果你有特殊需求可以根据注释自行修改。
 
-## 3.安装/配置Onebot实现端
+## 3.安装/配置 Onebot 实现端
 
 那么，如何安装 Onebot 实现端？首先你要知道市面上的 Onebot 实现端有很多，目前主流的有(被划掉意味基本不可用/已停止维护):
 - [Lagrange.Onebot](https://github.com/LagrangeDev/Lagrange.Core)
