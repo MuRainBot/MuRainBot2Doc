@@ -56,11 +56,13 @@ def handler(event: EventClassifier.GroupMessageEvent):
     ...
 ```
 
-随后，需要将 HelloWorld 发送出去。
+随后，需要将 HelloWorld 消息发送出去。
 
-众所周知，在 QQ 中，不知有纯文本消息，一个消息内可以包含图片、语音等，所以你需要使用 `QQRichText` 模块来将构建消息。
+众所周知，在 QQ 中，不止有纯文本消息，一个消息内可以包含图片、语音等，所以你需要使用 `QQRichText` 模块来将构建消息。
 
-在 MRB2 中，这类操作被称为 `Action`，将 Onebot11 标准中所有的 API 都封装成了 Action ，你只需要实例化他们并 `.call()` 调用即可。
+在 MRB2 中，这类操作被称为 `Action`，MRB2 将 Onebot11 标准中所有的 API 都封装成了 Action ，你只需要实例化他们并 `.call()` 调用即可。
+
+顺带一提，`Action` 不止可以 `.call()` 调用，还有许多种调用方法，但这些就留到后面的章节再讲吧
 
 由于发送群消息和发送私聊消息并不是一个操作，所以你需要加一个判断。
 
