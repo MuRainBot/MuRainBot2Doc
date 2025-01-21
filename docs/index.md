@@ -7,7 +7,7 @@ hero:
   text: "基于Python适配OneBot11协议的轻量级QQBot框架"
   tagline: 
   image:
-    src: /icon.png
+    src: /icon.webp
     alt: MuRainBot2
   actions:
     - theme: brand
