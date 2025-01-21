@@ -10,7 +10,7 @@
 :::
 
 
-好↑的↓ 相信你已经了解了以上内容，那么我们开始吧！
+好↑的↓ 相信你已经了解了以上内容，那么开始吧！
 
 ## 1.安装
 
@@ -36,7 +36,7 @@ git clone https://github.com/MuRainBot/MuRainBot2.git
 :::
 
 ### 1.2.1 使用venv虚拟环境(可选)
-为了避免干扰系统的python环境，我们使用venv虚拟环境来安装依赖。
+为了避免干扰系统的python环境，可以使用venv虚拟环境来安装依赖。
 
 创建虚拟环境
 ```bash
@@ -67,7 +67,7 @@ pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 ## 2.配置
 
-相信你已经成功安装并下载了项目所需的依赖，接下来我们开始配置
+相信你已经成功安装并下载了项目所需的依赖，接下来开始配置
 
 MRB2的配置文件位于`config.yml`文件内
 
@@ -103,24 +103,24 @@ auto_restart_onebot:  # 在Onebot实现端状态异常时自动重启Onebot实�
   enable: true  # 是否启用自动重启
 ```
 
-我们需要将Api设置和监听服务器设置都修改到空余的端口上
+需要将Api设置和监听服务器设置都修改到空余的端口上。
 
-其余配置项默认配置一般就可以满足普通需求，如果你有特殊需求可以根据注释自行修改
+其余配置项默认配置一般就可以满足普通需求，如果你有特殊需求可以根据注释自行修改。
 
 ## 3.安装/配置Onebot实现端
 
-那么，我们如何安装Onebot实现端？首先你要知道市面上的Onebot实现端有很多，目前主流的有(被划掉意味基本不可用/已停止维护):
+那么，如何安装Onebot实现端？首先你要知道市面上的Onebot实现端有很多，目前主流的有(被划掉意味基本不可用/已停止维护):
 - [Lagrange.Onebot](https://github.com/LagrangeDev/Lagrange.Core)
 - [LLOneBot](https://github.com/LLOneBot/LLOneBot)
 - [NapCat](https://github.com/NapNeko/NapCatQQ)
 - [~~OpenShamrock~~](https://github.com/whitechi73/OpenShamrock)
 - [~~go-cqhttp~~](https://github.com/Mrs4s/go-cqhttp)
 
-我们这里以Lagrange.Onebot作为示例
+这里以Lagrange.Onebot作为示例：
 
-根据Lagrange.Onebot的文档，下载编译好的二进制文件即可
+根据Lagrange.Onebot的文档，下载编译好的二进制文件。
 
-随后我们需要将Lagrange.Onebot的配置文件(`appsettings.json`)中的`Implementations`字段修改为以下内容（此为默认配置，若修改了监听服务器端口，请修改此处端口）:
+随后需要将Lagrange.Onebot的配置文件(`appsettings.json`)中的`Implementations`字段修改为以下内容（此为默认配置，若修改了监听服务器端口，请修改此处端口）:
 ```json
 "Implementations": [
         {
@@ -140,15 +140,15 @@ auto_restart_onebot:  # 在Onebot实现端状态异常时自动重启Onebot实�
     ]
 ```
 
-配置完成后，运行Lagrange.Onebot，登录账号即可
+配置完成后，运行Lagrange.Onebot，登录账号即可。
 
 ## 4.启动
 
 ::: tip
-如果你使用了venv虚拟环境请先激活环境
+如果你使用了venv虚拟环境请先激活环境。
 :::
 
-进入到MRB2根目录下
+进入到MRB2根目录下。
 
 ```bash
 python main.py
