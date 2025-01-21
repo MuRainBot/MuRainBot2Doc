@@ -4,7 +4,7 @@
 本文档以[`CC-BY-NC 4.0`](https://creativecommons.org/licenses/by-nc/4.0/legalcode.zh-hans)协议分发，请遵守协议相关规定。
 :::
 
-这里是MuRainBot2的使用文档。
+这里是 MuRainBot2 的使用文档。
 
 总而言之，既然已经点进来看文档了，想必你~~肯定~~是想使用MRB2对吧！
 

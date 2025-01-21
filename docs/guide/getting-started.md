@@ -3,9 +3,9 @@
 ::: warning 警告
 在阅读本文档之前默认您已经了解以下内容：
 
- - [python3的基本使用](https://docs.python.org/zh-cn/3/tutorial/index.html)
- - [pip的基本使用](https://www.runoob.com/w3cnote/python-pip-install-usage.html)
- - [onebot11协议的基本概念](https://11.onebot.dev)
+ - [python3 的基本使用](https://docs.python.org/zh-cn/3/tutorial/index.html)
+ - [pip 的基本使用](https://www.runoob.com/w3cnote/python-pip-install-usage.html)
+ - [onebot11 协议的基本概念](https://11.onebot.dev)
 
 :::
 
@@ -19,7 +19,7 @@
 git clone https://github.com/MuRainBot/MuRainBot2.git
 ```
 ::: tip
-如果不想要使用git也可以下载zip包
+如果不想要使用 git 也可以下载 zip 包
 [点击这里](https://codeload.github.com/MuRainBot/MuRainBot2/zip/refs/heads/master)
 
 下载完毕后，解压到任意位置即可。
@@ -30,13 +30,13 @@ git clone https://github.com/MuRainBot/MuRainBot2.git
 ### 1.2 安装依赖
 
 ::: warning 警告
-由于框架使用了f-string等高版本python才引入的语法，请确保你的python版本大于等于3.12
+由于框架使用了 f-string 等高版本 python 才引入的语法，请确保你的 python 版本大于等于 3.12
 
-若python版本不满足要求，可尝试自行搜索教程以更新python。
+若python版本不满足要求，可尝试自行搜索教程以更新 python。
 :::
 
 ### 1.2.1 使用venv虚拟环境(可选)
-为了避免干扰系统的python环境，可以使用venv虚拟环境来安装依赖。
+为了避免干扰系统的 python 环境，可以使用 venv 虚拟环境来安装依赖。
 
 创建虚拟环境
 ```bash
@@ -69,7 +69,7 @@ pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 相信你已经成功安装并下载了项目所需的依赖，接下来开始配置
 
-MRB2的配置文件位于`config.yml`文件内
+MRB2的配置文件位于 `config.yml` 文件内
 
 默认配置文件如下：
 ```yaml
@@ -109,18 +109,18 @@ auto_restart_onebot:  # 在Onebot实现端状态异常时自动重启Onebot实�
 
 ## 3.安装/配置Onebot实现端
 
-那么，如何安装Onebot实现端？首先你要知道市面上的Onebot实现端有很多，目前主流的有(被划掉意味基本不可用/已停止维护):
+那么，如何安装 Onebot 实现端？首先你要知道市面上的 Onebot 实现端有很多，目前主流的有(被划掉意味基本不可用/已停止维护):
 - [Lagrange.Onebot](https://github.com/LagrangeDev/Lagrange.Core)
 - [LLOneBot](https://github.com/LLOneBot/LLOneBot)
 - [NapCat](https://github.com/NapNeko/NapCatQQ)
 - [~~OpenShamrock~~](https://github.com/whitechi73/OpenShamrock)
 - [~~go-cqhttp~~](https://github.com/Mrs4s/go-cqhttp)
 
-这里以Lagrange.Onebot作为示例：
+这里以 Lagrange.Onebot 作为示例：
 
-根据Lagrange.Onebot的文档，下载编译好的二进制文件。
+根据 Lagrange.Onebot 的文档，下载编译好的二进制文件。
 
-随后需要将Lagrange.Onebot的配置文件(`appsettings.json`)中的`Implementations`字段修改为以下内容（此为默认配置，若修改了监听服务器端口，请修改此处端口）:
+随后需要将 Lagrange.Onebot 的配置文件( `appsettings.json` )中的 `Implementations` 字段修改为以下内容（此为默认配置，若修改了监听服务器端口，请修改此处端口）:
 ```json
 "Implementations": [
         {
@@ -140,15 +140,15 @@ auto_restart_onebot:  # 在Onebot实现端状态异常时自动重启Onebot实�
     ]
 ```
 
-配置完成后，运行Lagrange.Onebot，登录账号即可。
+配置完成后，运行 Lagrange.Onebot，登录账号即可。
 
 ## 4.启动
 
 ::: tip
-如果你使用了venv虚拟环境请先激活环境。
+如果你使用了 venv 虚拟环境请先激活环境。
 :::
 
-进入到MRB2根目录下。
+进入到 MRB2 根目录下。
 
 ```bash
 python main.py
@@ -156,5 +156,5 @@ python main.py
 
 没错，就这么简单
 
-至此，MRB2已经安装并配置完毕，你可以开始使用了！
+至此， MRB2 已经安装并配置完毕，你可以开始使用了！
 ℰ𝓃𝒿ℴ𝓎!
