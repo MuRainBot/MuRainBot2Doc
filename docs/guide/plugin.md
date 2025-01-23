@@ -34,13 +34,32 @@ plugin_info = PluginManager.PluginInfo(
 
 随后你需要创建一个 `matcher`，用来匹配事件，这里匹配`EventClassifier.MessageEvent`事件。
 
-为了实现关键词回复的效果，所以需要先创建一个 `Rule` 来约束 `matcher` 匹配的事件。
+为了实现命令回复的效果，所以需要先创建一个 `Rule` 来约束 `matcher` 匹配的事件。
 
 ```python
-rule = EventHandlers.KeyValueRule("message", "hello", model="eq")
+rule = EventHandlers.CommandRule("hello", aliases={"你好"})
 ```
 
-上方 `Rule` 的意思是，取事件中的 `message` 字段，如果等于"hello"则为匹配。
+上方 `Rule` 的意思是，是判断 message 是否是 `hello`，同时设置了一个别名 `你好`。
+
+::: tip
+此处的 `CommandRule` 会自动判断消息前面是否带 at 并且 at 的是自己，也就是说如果，消息是
+```text
+@bot 你好
+```
+也会触发，为了方便开发者，Rule 会直接删除 at 的部分，
+
+同时， `CommandRule` 会所以匹配命令前缀，而在 MRB2 的默认配置下也就是说
+```text
+/hello
+```
+也会触发。
+
+如果你觉得直接匹配全部这样的命令非常容易误判，你可以在下面的 `matcher` 的 rules 内添加一个 EventClassifier.to_me 的 `Rule` 来约束，
+`EventClassifier.to_me` 会只匹配群消息内 @bot 的消息，或对 bot 的私聊消息。
+
+不过这里有需要提醒的一点， Rule的判断顺序是根据列表的顺序，由于 `CommandRule` 会自动删除 at， 所以你需要将 `EventClassifier.to_me` 放在 `CommandRule` 的前面才能正确识别。
+:::
 
 然后使用 `Rule` 创建 `matcher`。
 
