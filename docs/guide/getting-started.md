@@ -13,7 +13,7 @@
 
 
 ::: tip
-如果使用时遇到问题，请将 `config.yml` 的`debug.enable`设置为`true`，然后复现 bug，
+如果使用时遇到问题，请将 `config.yml` 的 `debug.enable` 设置为 `true`，然后复现 bug，
 并检查该问题是否是你使用的 Onebot 实现端的问题（可查看实现端的日志检查是否有异常）
 
 如果是，请自行在你使用的 Onebot 实现端进行反馈。

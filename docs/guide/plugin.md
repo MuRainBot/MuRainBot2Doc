@@ -43,17 +43,15 @@ rule = EventHandlers.CommandRule("hello", aliases={"你好"})
 上方 `Rule` 的意思是，是判断 message 是否是 `hello`，同时设置了一个别名 `你好`。
 
 ::: tip
-此处的 `CommandRule` 会自动判断消息前面是否带 at 并且 at 的是自己，也就是说如果，消息是
-```text
-@bot 你好
-```
-也会触发，为了方便开发者，Rule 会直接删除 at 的部分，
+此处的 `CommandRule` 会在判断时生成一个全部可以匹配的列表，默认情况下，该列表的内容为 命令起始符+命令 和 命令起始符+别名。
 
-同时， `CommandRule` 会所匹配所有命令前缀，而在 MRB2 的默认配置下也就是说
-```text
-/hello
-```
-也会触发。
+同时 `CommandRule` 会自动判断消息前是否带有 at 且 at 的对象是 bot，则会在列表内添加 命令本身 和 别名，并自动删除 at。
+
+也就是说，如果你的消息前带有 at 则不需要添加命令起始符即可匹配，如果你的消息前面没用 at  则需要在命令前加上 命令起始符。
+
+为了方便开发者开发，`CommandRule` 会自动删除命令起始符。
+
+关于命令起始符可以在定义 `CommandRule` 的时候传入 如果没有设置，则会使用配置文件中的 `command_start` 来作为命令起始符（默认 `command_start` 为 `["/"]`）。
 
 如果你觉得直接匹配全部这样的命令非常容易误判，你可以在下面的 `matcher` 的 rules 内添加一个 EventClassifier.to_me 的 `Rule` 来约束，
 `EventClassifier.to_me` 会只匹配群消息内 @bot 的消息，或对 bot 的私聊消息。
