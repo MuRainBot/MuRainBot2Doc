@@ -12,7 +12,7 @@ hero:
   actions:
     - theme: brand
       text: 快速开始
-      link: /guide/about
+      link: /start/about
     - theme: alt
       text: GitHub
       link: https://github.com/MuRainBot/MuRainBot2

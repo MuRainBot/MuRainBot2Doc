@@ -8,16 +8,16 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: '主页', link: '/' },
-      { text: '文档', link: '/guide/about' }
+      { text: '文档', link: '/start/about' }
     ],
 
     sidebar: [
       {
         text: '快速开始',
         items: [
-          { text: '介绍', link: '/guide/about' },
-          { text: '快速开始', link: '/guide/getting-started' },
-          { text: '编写插件', link: '/guide/plugin'}
+          { text: '介绍', link: '/start/about' },
+          { text: '快速开始', link: '/start/getting-started' },
+          { text: '编写插件', link: '/start/plugin'}
         ]
       }
     ],
