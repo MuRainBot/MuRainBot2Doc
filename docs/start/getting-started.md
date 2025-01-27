@@ -13,12 +13,16 @@
 
 
 ::: tip
-如果使用时遇到问题，请将 `config.yml` 的 `debug.enable` 设置为 `true`，然后复现 bug，
-并检查该问题是否是你使用的 Onebot 实现端的问题（可查看实现端的日志检查是否有异常）
+如果使用时遇到问题，请将 `config.yml` 的`debug.enable`设置为`true`，然后复现 bug，
+
+对于非 MRB2 框架中的问题，我们概不处理，你可以在开启 debug 后自行检查该异常是否是你自己的插件中的问题；
+
+并检查该问题是否是你使用的 Onebot 实现端的问题（可查看实现端的日志检查是否有异常），
 
 如果是，请自行在你使用的 Onebot 实现端进行反馈。
 
 如果不是，将完整 完整 完整的将日志信息（部分对于问题排查不重要的敏感信息（如 QQ 群号、 QQ 号等）可自行遮挡） 和错误描述发到 [issues](https://github.com/MuRainBot/MuRainBot2/issues/new/choose)。
+
 :::
 
 ## 1.安装
