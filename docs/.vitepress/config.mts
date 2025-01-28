@@ -8,7 +8,8 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: '主页', link: '/' },
-      { text: '文档', link: '/start/about' }
+      { text: '文档', link: '/start/about' },
+      { text: 'LibAPI文档', link: 'https://mrb2api.xiaosu.icu' },
     ],
 
     sidebar: [

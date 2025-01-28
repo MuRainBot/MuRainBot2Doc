@@ -99,3 +99,6 @@ def handler(event: EventClassifier.GroupMessageEvent):
 ```
 
 至此，恭喜你已经完成了你第一个插件的编写，你现在可以启动 MRB2 来尝试一下效果。
+
+
+### 更进一步：你可以尝试边阅读[APIDoc](https://mrb2api.xiaosu.icu)，边开始你下个插件的开发
