@@ -20,6 +20,13 @@ export default defineConfig({
           { text: '快速开始', link: '/start/getting-started' },
           { text: '编写插件', link: '/start/plugin'}
         ]
+      },
+      {
+        text: '深入',
+        items: [
+          { text: '插件配置', link: '/advanced/plugin-config' },
+          { text: '插件依赖', link: '/advanced/require-plugin' }
+        ]
       }
     ],
 
