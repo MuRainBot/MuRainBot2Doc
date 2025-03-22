@@ -86,19 +86,19 @@ def handler(event: EventClassifier.GroupMessageEvent):
 ```python
 @matcher.register_handler()
 def handler(event: EventClassifier.GroupMessageEvent):
-    if event.message_type == "group": # [!code focus:10]
-        Actions.SendMsg(
-            group_id = event.group_id,
-            message = QQRichText.QQRichText(QQRichText.Text("HelloWorld!"))
-        ).call()
-    else:
-        Actions.SendMsg(
-            user_id = event.user_id,
-            message = QQRichText.QQRichText(QQRichText.Text("HelloWorld!"))
-        ).call()
+    # [!code focus:4]
+    Actions.SendMsg(
+        group_id = event.group_id,
+        message = QQRichText.QQRichText(QQRichText.Text("HelloWorld!"))
+    ).call()
 ```
 
 至此，恭喜你已经完成了你第一个插件的编写，你现在可以启动 MRB2 来尝试一下效果。
+
+
+::: tip
+此处我们监听的是群消息事件，所以只能在群聊中触发这个对话
+:::
 
 
 ### 更进一步：你可以尝试边阅读[APIDoc](https://mrb2api.xiaosu.icu)，边开始你下个插件的开发
