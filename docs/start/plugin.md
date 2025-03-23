@@ -101,4 +101,4 @@ def handler(event: EventClassifier.GroupMessageEvent):
 :::
 
 
-### 更进一步：你可以尝试边阅读[APIDoc](https://mrb2api.xiaosu.icu)，边开始你下个插件的开发
+### 更进一步：你可以尝试边阅读[APIDoc](https://mrb2api.xiaosu.icu)，边开始你下个插件的开发，或阅读 深入 板块的内容。

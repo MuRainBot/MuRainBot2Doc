@@ -25,7 +25,8 @@ export default defineConfig({
         text: '深入',
         items: [
           { text: '插件配置', link: '/advanced/plugin-config' },
-          { text: '插件依赖', link: '/advanced/require-plugin' }
+          { text: '插件依赖', link: '/advanced/require-plugin' },
+          { text: 'QQ数据缓存', link: '/advanced/data-cache' }
         ]
       }
     ],
