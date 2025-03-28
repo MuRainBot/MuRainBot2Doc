@@ -27,6 +27,9 @@ features:
   - icon: 🧩
     title: 模块化的插件系统
     details: 框架本身不提供功能，一切功能都是由一个个插件提供的
+  - icon: 🔁
+    title: 基于线程池
+    details: 使用线程池实现异步，但是又没有原本异步的复杂语法
   - icon: 🗑️
     title: 编不下去了……
     details: "没啥优点<br>你知道的，就正常一个QQBot框架基本该有的功能"
