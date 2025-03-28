@@ -24,9 +24,12 @@ export default defineConfig({
       {
         text: '深入',
         items: [
+          { text: '事件处理', link: '/advanced/event-handlers' },
+          { text: '操作', link: '/advanced/actions' },
+          { text: 'QQ富文本', link: '/advanced/rich-text' },
+          { text: 'QQ数据缓存', link: '/advanced/data-cache' },
           { text: '插件配置', link: '/advanced/plugin-config' },
-          { text: '插件依赖', link: '/advanced/require-plugin' },
-          { text: 'QQ数据缓存', link: '/advanced/data-cache' }
+          { text: '插件依赖', link: '/advanced/require-plugin' }
         ]
       }
     ],
