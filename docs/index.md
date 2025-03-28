@@ -23,7 +23,7 @@ features:
     details: 使用Python开发，效率++
   - icon: 🪶
     title: 轻量化
-    details: 没有太多冗杂的功能，内存占用低
+    details: 没有太多冗杂的功能，使用简单，内存占用低
   - icon: 🧩
     title: 模块化的插件系统
     details: 框架本身不提供功能，一切功能都是由一个个插件提供的
