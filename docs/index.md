@@ -30,9 +30,6 @@ features:
   - icon: 🔁
     title: 基于线程池
     details: 使用线程池实现异步，但是又没有原本异步的复杂语法
-  - icon: 🗑️
-    title: 编不下去了……
-    details: "没啥优点<br>你知道的，就正常一个QQBot框架基本该有的功能"
 ---
 
 <script setup>
