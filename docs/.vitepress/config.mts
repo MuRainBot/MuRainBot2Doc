@@ -32,12 +32,13 @@ export default defineConfig({
           { text: '插件配置', link: '/advanced/plugin-config' },
           { text: '插件依赖', link: '/advanced/require-plugin' }
         ]
-      }
+      },
       {
-        text: '生态'
+        text: '生态',
         items: [
           { text: '插件商店', link: '/ecosystem/plugins' }
         ]
+      }
     ],
 
     socialLinks: [
