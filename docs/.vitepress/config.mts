@@ -9,6 +9,7 @@ export default defineConfig({
     nav: [
       { text: '主页', link: '/' },
       { text: '文档', link: '/start/about' },
+      { text: '插件商店', link: '/ecosystem/plugins'}
       { text: 'LibAPI文档', link: 'https://mrb2api.xiaosu.icu' },
     ],
 
@@ -32,6 +33,11 @@ export default defineConfig({
           { text: '插件依赖', link: '/advanced/require-plugin' }
         ]
       }
+      {
+        text: '生态'
+        items: [
+          { text: '插件商店', link: '/ecosystem/plugins' },
+        ]
     ],
 
     socialLinks: [
