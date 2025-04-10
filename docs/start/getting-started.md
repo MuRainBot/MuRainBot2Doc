@@ -12,16 +12,22 @@
 好↑的↓ 相信你已经了解了以上内容，那么开始吧！
 
 
-::: tip
-如果使用时遇到问题，请将 `config.yml` 的`debug.enable`设置为`true`，然后复现 bug，
+::: tip 必看提示
+如果使用时遇到问题，请按以下步骤操作：
 
-对于非 MRB2 框架中的问题，我们概不处理，你可以在开启 debug 后自行检查该异常是否是你自己的插件中的问题；
+1.  将框架版本更新到 [`dev`](https://github.com/MuRainBot/MuRainBot2/tree/dev) 分支
+2.  将 `config.yml` 中的 `debug.enable` 设置为 `true`。
+3.  复现您遇到的 Bug。
+4.  **检查 Onebot 实现端的日志**，确认问题是否源于实现端本身。如果是，请向您使用的实现端反馈。
+5.  如果问题确认在 MRB2 框架：
+    *   请准备**完整**的 MRB2 日志文件 (`logs` 目录下)。您可以自行遮挡日志中的 QQ 号、群号等敏感信息。
+    *   提供清晰的错误描述、复现步骤。
+    *   如果开启了 `save_dump` 且生成了 dump 文件，可以一并提供。（不强制，但是推荐提供，不过需要注意可以检查一下是否包含apikey等敏感信息）
+    *   将以上信息提交到项目的 [**Issues**](https://github.com/MuRainBot/MuRainBot2/issues/new/choose) 页面。
 
-并检查该问题是否是你使用的 Onebot 实现端的问题（可查看实现端的日志检查是否有异常），
+---
 
-如果是，请自行在你使用的 Onebot 实现端进行反馈。
-
-如果不是，将完整 完整 完整的将日志信息（部分对于问题排查不重要的敏感信息（如 QQ 群号、 QQ 号等）可自行遮挡） 和错误描述发到 [issues](https://github.com/MuRainBot/MuRainBot2/issues/new/choose)。
+如果不遵守以上的步骤，开发者可能会无视或直接删除你的 Issues。
 
 :::
 
