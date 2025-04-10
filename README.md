@@ -19,3 +19,9 @@ npm install
 ```bash
 npm run docs:dev
 ```
+
+## 许可证
+
+版权所有 2025 Xiaosu。
+
+根据 [Apache 2.0 许可证](https://github.com/MuRainBot/MuRainBot2Doc/blob/master/LICENSE) 的条款分发，请遵守协议相关条款。
