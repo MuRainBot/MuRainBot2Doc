@@ -7,14 +7,14 @@
 ## 核心概念
 
 1.  **事件 (Event):** 由 `Lib.utils.EventClassifier` 定义。当 MRB2 从 Onebot 实现端接收到数据时，会将其解析为标准化的事件对象，例如 `EventClassifier.GroupMessageEvent` (群消息)、`EventClassifier.PrivateMessageEvent` (私聊消息)、`EventClassifier.NoticeEvent` (通知事件) 等。每个事件对象都携带了该事件的详细信息（如 `message_id`、`user_id`、`group_id`、`message_type`、`raw_message`、`message` 等）。
-2.  **规则 (Rule):** 一个用于过滤事件的条件。它通常是一个 `EventHandlers.Rule` 的子类实例。规则的核心是一个 `match` 方法，该方法接收一个 `event_data` 对象，并返回 `True` (表示事件符合规则) 或 `False` (表示事件不符合规则)。MRB2 提供了多种内置规则，你也可以创建自定义规则。
+2.  **规则 (Rule):** 一个用于过滤事件的条件。它通常是一个 `EventHandlers.Rule` 的子类实例。规则的核心是一个 `match` 方法，该方法接收一个 `event_data` 对象，并返回 `True` (表示事件符合规则) 或 `False` (表示事件不符合规则)。MRB2 提供了多种内置规则，你也可以创建自定义规则。规则匹配过程中发生的错误会被记录并包含详细的回溯信息。
 3.  **匹配器 (Matcher):** 通过 `EventHandlers.on_event()` 函数创建。一个 Matcher 绑定到一个特定的 **事件类型** (如 `EventClassifier.GroupMessageEvent`) 和一组可选的 **初始规则**。只有当一个事件的类型匹配 *并且* 满足所有初始规则时，该事件才会被考虑传递给此 Matcher 下注册的 Handler。Matcher 可以设置优先级，决定其匹配尝试的顺序。
 4.  **处理器 (Handler):** 使用 `@Matcher实例.register_handler()` 装饰器注册到 Matcher 上的 **函数**。这是你编写插件核心逻辑的地方。每个 Handler 也可以定义自己的 **附加规则** 和优先级。只有当事件同时满足了 Matcher 的初始规则 *和* Handler 的附加规则时，该 Handler 函数才会被 MRB2 的 **线程池** 调用执行。
 5.  **状态管理与依赖注入 (State Management & Dependency Injection):** MRB2 提供了 `Lib.utils.StateManager` 用于在**内存中临时存储**与用户或群组相关的状态。`EventHandlers` 集成了该功能，允许 Handler 函数通过 **特定名称的参数** (如 `state`, `user_state`, `group_state`) 自动接收和操作相应的状态数据。**重要警告：状态数据存储于内存中，会在机器人重启时丢失，需要持久化保存的数据请勿放在里面！**
 
 ## 使用 `on_event` 创建事件匹配器
 
-要开始响应特定类型的事件，你需要使用 `EventHandlers.on_event()` 来创建一个 `Matcher`。此函数会自动获取调用它的插件信息。
+要开始响应特定类型的事件，你需要使用 `EventHandlers.on_event()` 来创建一个 `Matcher`。此函数会自动检测并关联调用它的插件信息，无需手动指定。
 
 ```python
 # 示例：创建一个 Matcher 来监听所有的群消息事件
@@ -105,10 +105,10 @@ def handle_with_state(event_data: EventClassifier.GroupMessageEvent, user_state:
 *   第一个参数 **必须** 是 `event_data`，它就是匹配成功的那个事件对象。其类型与 `on_event` 中指定的 `event` 参数一致（或为其子类），建议使用类型注解（如 `event_data: EventClassifier.GroupMessageEvent`）以获得更好的开发和静态检查体验。
 *   **依赖注入 (Dependency Injection):** 你可以通过在函数签名中包含特定名称的参数来请求自动注入状态数据。**【警告】注入的状态数据存储在内存中，重启后会丢失，请勿用于需要持久化的场景！**
     *   `state: dict`: 获取与当前交互最相关的状态。
-        *   对于 `GroupMessageEvent`，获取 `g<group_id>_u<user_id>` 的状态。
-        *   对于 `PrivateMessageEvent` 或其他 `MessageEvent` 子类，获取 `u<user_id>` 的状态。
-        *   **注意:** 如果事件不是 `MessageEvent` 或其子类，请求 `state` 会引发 `TypeError`。
-    *   `user_state: dict`: 明确获取与当前用户 (`u<user_id>`) 关联的状态。适用于所有 `MessageEvent` 子类。
+        *   如果 `event_data` 是 `MessageEvent` 且 `event_data.message_type == "group"`，获取 `g<group_id>_u<user_id>` 的状态。
+        *   如果 `event_data` 是 `MessageEvent` 且 `event_data.message_type == "private"`，获取 `u<user_id>` 的状态。
+        *   **注意:** 如果事件不是 `MessageEvent` 或 `message_type` 不是 "group" 或 "private"，请求 `state` 会引发 `TypeError`。
+    *   `user_state: dict`: 明确获取与当前用户 (`u<user_id>`) 关联的状态。适用于所有 `MessageEvent` 子类。如果事件不是 `MessageEvent`，会引发 `TypeError`。
     *   `group_state: dict`: 明确获取与当前群组 (`g<group_id>`) 关联的状态。仅适用于 `GroupMessageEvent`。如果事件不是 `GroupMessageEvent`，请求此参数会引发 `TypeError`。
     *   **状态对象结构:** 注入的 `state`, `user_state`, `group_state` 都是字典，包含以下键：
         *   `state_id` (`str`): 用于获取此状态的 ID (例如 `"u12345"`, `"g67890"`, `"g67890_u12345"`)。
@@ -216,6 +216,7 @@ def is_group_owner(event_data: EventClassifier.Event) -> bool:
     if event_data.get("message_type") != "group":
         return False
     sender = event_data.get("sender")
+    # 确保 sender 是字典类型再获取 role
     return isinstance(sender, dict) and sender.get("role") == "owner"
 
 # 创建 FuncRule
@@ -290,11 +291,14 @@ def handle_echo(event_data: EventClassifier.MessageEvent):
 
     # 根据消息类型发送回复
     if event_data.message_type == "group":
+        # 健壮性检查：确保 group_id 存在
         if "group_id" in event_data:
             Actions.SendMsg(
                 group_id=event_data.group_id,
                 message=QQRichText.QQRichText(QQRichText.Reply(event_data.message_id), reply_text)
             ).call()
+        else:
+            logger.warning(f"尝试在非群聊事件中发送群消息 (echo): {event_data}")
     elif event_data.message_type == "private":
          Actions.SendPrivateMsg(
             user_id=event_data.user_id,
@@ -571,11 +575,14 @@ def handle_status_with_user_state(event_data: EventClassifier.MessageEvent, user
 
     try:
         if event_data.message_type == "group":
-             if "group_id" in event_data:
+             # 确保有 group_id (虽然 to_me 规则暗示了它是有效群消息)
+            if "group_id" in event_data:
                 Actions.SendMsg(
                     group_id=event_data.group_id,
                     message=QQRichText.QQRichText(QQRichText.Reply(event_data.message_id), reply_text)
                 ).call()
+            else:
+                 logger.warning(f"尝试在非群聊事件中发送群聊状态回复: {event_data}")
         elif event_data.message_type == "private":
             Actions.SendPrivateMsg(user_id=event_data.user_id, message=reply_text).call()
 
