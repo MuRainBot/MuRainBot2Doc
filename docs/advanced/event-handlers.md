@@ -339,8 +339,9 @@ def handle_checkin(event_data: EventClassifier.MessageEvent):
 
 **匹配条件:** (内部实现细节)
 
-*   事件对象是 `PrivateMessageEvent` 的实例。
-*   **或者** 事件对象是 `GroupMessageEvent` 的实例，并且其 `message.rich_array` 中包含一个 `QQRichText.At` 段，其 `qq` 数据等于 `event_data.self_id`。
+*   前提：事件对象是 `MessageEvent` 的实例，否则会日志警告并返回 `False`。
+*   事件对象的 `message_type` 为 `"private"`
+*   **或者** 事件对象的 `message_type` 为 `"group"`，并且其 `message.rich_array` 中包含一个 `QQRichText.At` 段，其 `qq` 数据等于 `ConfigManager.GlobalConfig().account.user_id`。
 
 **使用场景:** 通常用于确保命令或交互只在用户直接与机器人沟通时触发，避免响应群内无关的消息。
 
