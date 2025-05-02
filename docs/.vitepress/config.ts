@@ -26,8 +26,8 @@ export default ({
                     { text: '事件处理', link: '/advanced/event-handlers' },
                     { text: '事件管理器', link: '/advanced/event-manager' },
                     { text: '操作', link: '/advanced/actions' },
-                    { text: 'QQ富文本', link: '/advanced/rich-text' },
-                    { text: 'QQ数据缓存', link: '/advanced/data-cache' },
+                    { text: '富文本', link: '/advanced/rich-text' },
+                    { text: '数据缓存', link: '/advanced/data-cache' },
                     { text: '插件配置', link: '/advanced/plugin-config' },
                     { text: '插件管理器', link: '/advanced/plugin-manager' }
                 ]

@@ -4,7 +4,7 @@ layout: home
 
 hero:
   name: "MuRainBot2"
-  text: "一个基于 Python<br>适配 OneBot11 协议的<br>轻量级 QQBot 框架"
+  text: "一个基于 Python<br>适配 OneBot11 协议的<br>轻量级 ChatBot 框架"
   tagline: 
   image:
     src: /icon.webp
