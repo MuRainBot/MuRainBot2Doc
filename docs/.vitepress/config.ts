@@ -1,5 +1,19 @@
-// https://vitepress.dev/reference/site-config
-export default ({
+import { defineConfig } from 'vitepress'
+import {
+    GitChangelog,
+    GitChangelogMarkdownSection,
+} from '@nolebase/vitepress-plugin-git-changelog/vite'
+
+export default defineConfig({
+    vite: {
+        plugins: [
+            GitChangelog({
+                repoURL: () => 'https://github.com/MuRainBot/MuRainBot2Doc',
+            }),
+            GitChangelogMarkdownSection(),
+        ],
+    },
+    lang: 'zh-CN',
     title: "MuRainBot2 Doc",
     description: "MuRainBot2's Doc",
     themeConfig: {
@@ -51,6 +65,15 @@ export default ({
         search: {
           provider: 'local'
         },
+
+        editLink: {
+          pattern: 'https://github.com/MuRainBot/MuRainBot2Doc/edit/master/docs/:path',
+          text: '帮助我们改进此文档'
+        },
+
+        lastUpdated: {
+          text: '最后更新于'
+        }
     },
     cleanUrls: true
 })
