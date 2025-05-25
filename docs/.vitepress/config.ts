@@ -43,7 +43,8 @@ export default defineConfig({
                     { text: '富文本', link: '/advanced/rich-text' },
                     { text: '数据缓存', link: '/advanced/data-cache' },
                     { text: '插件配置', link: '/advanced/plugin-config' },
-                    { text: '插件管理器', link: '/advanced/plugin-manager' }
+                    { text: '插件管理器', link: '/advanced/plugin-manager' },
+                    { text: '适配其他协议 (兼容层方案)', link: '/advanced/multi-protocol-adaptation' }
                 ]
             },
             {
