@@ -7,20 +7,20 @@
 ## 核心概念
 
 1.  **事件 (Event):** 由 `Lib.utils.EventClassifier` 定义。当 MRB2 从 Onebot 实现端接收到数据时，会将其解析为标准化的事件对象，例如 `EventClassifier.GroupMessageEvent` (群消息)、`EventClassifier.PrivateMessageEvent` (私聊消息)、`EventClassifier.NoticeEvent` (通知事件) 等。每个事件对象都携带了该事件的详细信息（如 `message_id`、`user_id`、`group_id`、`message_type`、`raw_message`、`message` 等）。
-2.  **规则 (Rule):** 一个用于过滤事件的条件。它通常是一个 `EventHandlers.Rule` 的子类实例。规则的核心是一个 `match` 方法，该方法接收一个 `event_data` 对象，并返回 `True` (表示事件符合规则) 或 `False` (表示事件不符合规则)。MRB2 提供了多种内置规则，你也可以创建自定义规则。规则匹配过程中发生的错误会被记录并包含详细的回溯信息。
-3.  **匹配器 (Matcher):** 通过 `EventHandlers.on_event()` 函数创建。一个 Matcher 绑定到一个特定的 **事件类型** (如 `EventClassifier.GroupMessageEvent`) 和一组可选的 **初始规则**。只有当一个事件的类型匹配 *并且* 满足所有初始规则时，该事件才会被考虑传递给此 Matcher 下注册的 Handler。Matcher 可以设置优先级，决定其匹配尝试的顺序。
+2.  **规则 (Rule):** 一个用于过滤事件的条件。它通常是一个 `Rule` 的子类实例=。规则的核心是一个 `match` 方法，该方法接收一个 `event_data` 对象，并返回 `True` (表示事件符合规则) 或 `False` (表示事件不符合规则)。MRB2 提供了多种内置规则，你也可以创建自定义规则。规则匹配过程中发生的错误会被记录并包含详细的回溯信息。
+3.  **匹配器 (Matcher):** 通过 `on_event()` 函数创建。一个 Matcher 绑定到一个特定的 **事件类型** (如 `EventClassifier.GroupMessageEvent`) 和一组可选的 **初始规则**。只有当一个事件的类型匹配 *并且* 满足所有初始规则时，该事件才会被考虑传递给此 Matcher 下注册的 Handler。Matcher 可以设置优先级，决定其匹配尝试的顺序。
 4.  **处理器 (Handler):** 使用 `@Matcher实例.register_handler()` 装饰器注册到 Matcher 上的 **函数**。这是你编写插件核心逻辑的地方。每个 Handler 也可以定义自己的 **附加规则** 和优先级。只有当事件同时满足了 Matcher 的初始规则 *和* Handler 的附加规则时，该 Handler 函数才会被 MRB2 的 **线程池** 调用执行。
 5.  **状态管理与依赖注入 (State Management & Dependency Injection):** MRB2 提供了 `Lib.utils.StateManager` 用于在**内存中临时存储**与用户或群组相关的状态。`EventHandlers` 集成了该功能，允许 Handler 函数通过 **特定名称的参数** (如 `state`, `user_state`, `group_state`) 自动接收和操作相应的状态数据。**重要警告：状态数据存储于内存中，会在机器人重启时丢失，需要持久化保存的数据请勿放在里面！**
 
 ## 使用 `on_event` 创建事件匹配器
 
-要开始响应特定类型的事件，你需要使用 `EventHandlers.on_event()` 来创建一个 `Matcher`。此函数会自动检测并关联调用它的插件信息，无需手动指定。
+要开始响应特定类型的事件，你需要使用 `on_event()` 来创建一个 `Matcher`。此函数会自动检测并关联调用它的插件信息，无需手动指定。
 
 ```python
 # 示例：创建一个 Matcher 来监听所有的群消息事件
 # priority: Matcher 的优先级，数字越大越先尝试匹配
 # rules: 一个 Rule 列表，事件必须满足所有这些规则才能继续
-group_message_matcher = EventHandlers.on_event(
+group_message_matcher = on_event(
     event=EventClassifier.GroupMessageEvent, # 指定监听的事件类型
     priority=5,                             # 设置优先级为 5
     rules=[]                                # 初始规则列表，这里为空，表示所有群消息都初步匹配
@@ -34,7 +34,7 @@ group_message_matcher = EventHandlers.on_event(
 
 *   `event`: **必需**。要监听的事件类型，必须是 `Lib.utils.EventClassifier.Event` 的子类（例如 `EventClassifier.GroupMessageEvent`, `EventClassifier.NoticeEvent` 等）。框架会确保只有此类型或其子类型的事件才会触发这个 `Matcher` 的检查。
 *   `priority`: 可选。整数，定义此 `Matcher` 的优先级，默认为 `0`。**数字越大，优先级越高**。当一个事件发生时，高优先级的 `Matcher` 会先于低优先级的 `Matcher` 尝试匹配。
-*   `rules`: 可选。一个包含 `Rule` 对象的列表 (`list[Rule]`)。事件必须 **同时满足** 列表中的所有规则，才会被认为通过了此 Matcher 的初步筛选，进而传递给其下的 Handler 进行进一步匹配。如果为空列表 `[]`（默认），则只根据 `event` 类型进行初步筛选。
+*   `rules`: 可选。一个包含 `Rule` 对象的列表 (`list[Rule]`)。事件必须 **同时满足** 列表中的所有规则，才会被认为通过了此 Matcher 的初步筛选，进而传递给其下的 Handler 进行进一步匹配。如果为空列表 `[]`（默认），则只根据 `event` 类型进行初步筛选。列表中的每个 `Rule` 对象可以是单个规则（如 `CommandRule(...)`），也可以是通过 `&` 或 `|` 组合而成的复合规则（如 `ruleA & ruleB` 或 `ruleA | ruleB`）。
 
 `on_event` 返回一个 `Matcher` 对象，后续需要使用这个对象来注册处理函数。
 
@@ -46,7 +46,7 @@ group_message_matcher = EventHandlers.on_event(
 # ... 接上一个例子 ...
 
 # 定义一个规则：仅匹配来自特定群组 (12345) 的消息
-specific_group_rule = EventHandlers.KeyValueRule("group_id", 12345, model="eq")
+specific_group_rule = KeyValueRule("group_id", 12345, model="eq")
 
 # 在 group_message_matcher 上注册一个处理函数
 # priority: Handler 在 Matcher 内部的优先级
@@ -96,7 +96,7 @@ def handle_with_state(event_data: EventClassifier.GroupMessageEvent, user_state:
 **`register_handler` 参数:**
 
 *   `priority`: 可选。整数，定义此 `Handler` 在其所属 `Matcher` 内部的优先级，默认为 `0`。**数字越大，优先级越高**。在同一个 `Matcher` 内部，高优先级的 `Handler` 会先于低优先级的 `Handler` 尝试匹配和执行。
-*   `rules`: 可选。一个包含 `Rule` 对象的列表 (`list[Rule]`)。事件在满足了 `on_event` 定义的初始规则后，还必须 **同时满足** 这个列表中的所有附加规则，这个 `Handler` 函数才会被执行。默认为空列表 `[]`。
+*   `rules`: 可选。一个包含 `Rule` 对象的列表 (`list[Rule]`)。事件在满足了 `on_event` 定义的初始规则后，还必须 **同时满足** 这个列表中的所有附加规则，这个 `Handler` 函数才会被执行。默认为空列表 `[]`。列表中的每个 `Rule` 对象可以是单个规则（如 `CommandRule(...)`），也可以是通过 `&` 或 `|` 组合而成的复合规则（如 `ruleA & ruleB` 或 `ruleA | ruleB`）。
 *   `*args`, `**kwargs`: 可选。这些额外的参数会**静态地**传递给你定义的 `Handler` 函数，排在 `event_data` 和任何自动注入的参数之后。
 
 **Handler 函数:**
@@ -121,30 +121,49 @@ def handle_with_state(event_data: EventClassifier.GroupMessageEvent, user_state:
 
 ## 内置规则 (`Rule`) 类型
 
-`EventHandlers` 模块提供了一系列方便的内置规则类，它们都继承自 `EventHandlers.Rule` 基类。
+`EventHandlers` 模块提供了一系列方便的内置规则类，它们都继承自 `Rule` 基类。
 
 ### `Rule` (基类)
 
-所有规则的父类，定义了 `match(self, event_data: EventClassifier.Event)` 接口。通常不直接使用，而是使用其子类或自定义继承它。
+所有规则的父类，定义了 `match(self, event_data: EventClassifier.Event)` 接口。
+
+现在，在新版本中，`Rule` 对象支持使用 `&` (逻辑与) 和 `|` (逻辑或) 运算符来组合规则，使得规则的定义更加简洁和 Pythonic。
+
+*   `rule1 & rule2`: 创建一个新的 `AllRule` 实例，要求 `rule1` 和 `rule2` **都**匹配。
+*   `rule1 | rule2`: 创建一个新的 `AnyRule` 实例，要求 `rule1` 或 `rule2` **至少一个**匹配。
+
+你可以链式使用这些运算符：`rule1 & rule2 | rule3` (注意运算符优先级，`&` 高于 `|`，或者使用括号 `(rule1 & rule2) | rule3` 来明确指定顺序)。
+
+**推荐使用运算符来组合两个规则。** 对于组合两个以上的规则，或者希望代码更明确地表达 `AllRule` 或 `AnyRule` 的意图时，仍然可以直接使用 `AllRule` 和 `AnyRule` 类。通常不直接实例化 `Rule` 基类，而是使用其子类或通过运算符组合它们。
 
 ### `AnyRule`
 
 逻辑或规则。包含一个或多个子规则。只要事件满足其包含的 **任意一个** 子规则，`AnyRule` 就匹配成功。
 
 ```python
-rule1 = EventHandlers.CommandRule("菜单")
-rule2 = EventHandlers.CommandRule("功能")
+rule1 = CommandRule("菜单")
+rule2 = CommandRule("功能")
+rule3 = CommandRule("帮助") # 假设还有第三个规则
 
-# 匹配 "菜单" 或 "功能" 命令
-# 但是如果要给一个命令绑定多个触发名称不建议使用此方法，
-# 而是使用 CommandRule 的 aliases 参数。
-menu_or_func_rule = EventHandlers.AnyRule(rule1, rule2)
+# 推荐：使用 | 运算符组合两个规则
+menu_or_func_rule = rule1 | rule2
+
+# 对于组合两个以上的规则，可以直接使用 AnyRule 或链式 | 运算符
+complex_any_rule1 = AnyRule(rule1, rule2, rule3)
+complex_any_rule2 = rule1 | rule2 | rule3 # 效果同上
 
 # 使用方式：
-# matcher = EventHandlers.on_event(..., rules=[menu_or_func_rule])
+# matcher = on_event(..., rules=[menu_or_func_rule])
+# 或者
+# matcher = on_event(..., rules=[complex_any_rule1])
+
+# 如果要给一个命令绑定多个触发名称不建议使用此方法，
+# 而是使用 CommandRule 的 aliases 参数。
 ```
 
 **`__init__(self, *rules: Rule)`:** 接收任意数量的 `Rule` 对象作为参数。
+
+**注意：** 虽然可以直接使用 `AnyRule`，但对于两个规则的 OR 组合，更推荐使用 `|` 运算符 (例如 `rule1 | rule2`)。`AnyRule` 在需要组合两个以上规则或希望代码更明确其意图时仍然有用。
 
 ### `AllRule`
 
@@ -152,18 +171,31 @@ menu_or_func_rule = EventHandlers.AnyRule(rule1, rule2)
 
 ```python
 # 规则1: 必须是群消息 (通过检查 message_type 字段)
-is_group_msg = EventHandlers.KeyValueRule("message_type", "group", model="eq")
+is_group_msg = KeyValueRule("message_type", "group", model="eq")
 # 规则2: 消息内容包含 "签到"
-contains_checkin = EventHandlers.KeyValueRule("raw_message", "签到", model="in")
+contains_checkin = KeyValueRule("raw_message", "签到", model="in")
+# 规则3: 假设还有第三个规则
+is_admin = FuncRule(lambda e: e.sender.role in ("admin", "owner")) # 示例，实际需判空
 
-# 必须是群消息且内容包含 "签到"
-group_checkin_rule = EventHandlers.AllRule(is_group_msg, contains_checkin)
+# 推荐：使用 & 运算符组合两个规则
+group_checkin_rule = is_group_msg & contains_checkin
+
+# 对于组合两个以上的规则，可以直接使用 AllRule 或链式 & 运算符
+complex_all_rule1 = AllRule(is_group_msg, contains_checkin, is_admin)
+complex_all_rule2 = is_group_msg & contains_checkin & is_admin # 效果同上
 
 # 使用方式：
-# matcher = EventHandlers.on_event(EventClassifier.MessageEvent, rules=[group_checkin_rule])
+# 1. 使用 & 组合的规则:
+# matcher = on_event(EventClassifier.MessageEvent, rules=[group_checkin_rule])
+# 2. 或者将多个规则直接放入 rules 列表 (隐式 AND，效果等同于用 & 组合或 AllRule):
+# matcher = on_event(EventClassifier.MessageEvent, rules=[is_group_msg, contains_checkin])
+# 3. 或者
+# matcher = on_event(EventClassifier.MessageEvent, rules=[complex_all_rule1])
 ```
 
 **`__init__(self, *rules: Rule)`:** 接收任意数量的 `Rule` 对象作为参数。
+
+**注意：** 虽然可以直接使用 `AllRule`，但对于两个规则的 AND 组合，更推荐使用 `&` 运算符 (例如 `rule1 & rule2`)。`AllRule` 在需要组合两个以上规则或希望代码更明确其意图时仍然有用。此外，传递给 `on_event` 或 `register_handler` 的 `rules` 列表中的规则本身就是以 AND 逻辑组合的（即列表中的所有规则都必须匹配，效果等同于用 `AllRule` 包裹它们或用 `&` 连接它们）。
 
 ### `KeyValueRule`
 
@@ -171,17 +203,17 @@ group_checkin_rule = EventHandlers.AllRule(is_group_msg, contains_checkin)
 
 ```python
 # 匹配来自特定用户 (QQ=10001) 的消息
-user_rule = EventHandlers.KeyValueRule("user_id", 10001, model="eq")
+user_rule = KeyValueRule("user_id", 10001, model="eq")
 
 # 匹配非管理员发送的消息 (假设管理员 user_id 在一个集合里)
 admin_ids = {10001, 10002}
-not_admin_rule = EventHandlers.KeyValueRule("user_id", admin_ids, model="not in")
+not_admin_rule = KeyValueRule("user_id", admin_ids, model="not in")
 
 # 匹配消息原始文本包含 "紧急"
-urgent_keyword_rule = EventHandlers.KeyValueRule("raw_message", "紧急", model="in")
+urgent_keyword_rule = KeyValueRule("raw_message", "紧急", model="in")
 
 # 匹配通知事件中的群文件上传类型
-file_upload_rule = EventHandlers.KeyValueRule("notice_type", "group_upload", model="eq")
+file_upload_rule = KeyValueRule("notice_type", "group_upload", model="eq")
 
 # 使用自定义函数判断 group_id 是否为奇数
 def is_odd_group(event_value, compare_value):
@@ -190,7 +222,7 @@ def is_odd_group(event_value, compare_value):
     # 最好先检查 event_value 是否为 int
     return isinstance(event_value, int) and event_value % 2 != 0
 
-odd_group_rule = EventHandlers.KeyValueRule("group_id", None, model="func", func=is_odd_group)
+odd_group_rule = KeyValueRule("group_id", None, model="func", func=is_odd_group)
 ```
 
 **`__init__(self, key, value, model: Literal["eq", "ne", "in", "not in", "func"], func: Callable[[Any, Any], bool] = None)`:**
@@ -220,11 +252,11 @@ def is_group_owner(event_data: EventClassifier.Event) -> bool:
     return isinstance(sender, dict) and sender.get("role") == "owner"
 
 # 创建 FuncRule
-owner_rule = EventHandlers.FuncRule(is_group_owner)
+owner_rule = FuncRule(is_group_owner)
 
 # 或者使用 lambda 表达式，检查是否为特定管理员发送
 admin_ids = {10001, 10002}
-admin_rule_lambda = EventHandlers.FuncRule(
+admin_rule_lambda = FuncRule(
     lambda event: event.get("user_id") in admin_ids
 )
 ```
@@ -255,7 +287,7 @@ admin_rule_lambda = EventHandlers.FuncRule(
 
 ```python
 # 规则1：匹配 "/echo <内容>" 或 "#复读 <内容>"
-echo_rule = EventHandlers.CommandRule(
+echo_rule = CommandRule(
     command="echo",
     aliases={"复读"},
     command_start=["/", "#"], # 指定命令前缀
@@ -264,7 +296,7 @@ echo_rule = EventHandlers.CommandRule(
 )
 
 # 规则2：匹配 "/签到"，不允许任何额外内容
-checkin_rule = EventHandlers.CommandRule(
+checkin_rule = CommandRule(
     command="签到",
     # command_start 不指定，则使用全局配置
     no_args=True             # 要求精确匹配，不能有参数
@@ -272,7 +304,7 @@ checkin_rule = EventHandlers.CommandRule(
 
 # --- 注册 Handler ---
 # 假设监听所有消息事件
-matcher = EventHandlers.on_event(EventClassifier.MessageEvent)
+matcher = on_event(EventClassifier.MessageEvent)
 
 @matcher.register_handler(rules=[echo_rule])
 def handle_echo(event_data: EventClassifier.MessageEvent):
@@ -347,13 +379,19 @@ def handle_checkin(event_data: EventClassifier.MessageEvent):
 
 ```python
 # 规则：必须是发给我的 "help" 命令
-help_rule = EventHandlers.CommandRule("help")
+help_rule = CommandRule("help")
 
 # Matcher: 监听所有消息，初始规则要求是 to_me 和 help 命令
-help_matcher = EventHandlers.on_event(
+help_matcher = on_event(
     event=EventClassifier.MessageEvent,
-    rules=[EventHandlers.to_me, help_rule] # 先检查 to_me，再检查 help 命令
+    rules=[to_me & help_rule]
 )
+# 或者，因为 rules 列表本身就是 AND 关系：
+# help_matcher = on_event(
+#     event=EventClassifier.MessageEvent,
+#     rules=[to_me, help_rule]
+# )
+
 
 @help_matcher.register_handler()
 def handle_direct_help(event_data: EventClassifier.MessageEvent):
@@ -465,14 +503,14 @@ user_state_manual["data"]["last_command"] = "/status"
     *   框架找到所有通过 `on_event` 注册监听了该 **具体事件类型** (`GroupMessageEvent`) 的 `Matcher` （这些 Matcher 来自不同的插件文件）。
     *   这些 `Matcher` 按照它们在 `on_event` 中设置的 `priority` **降序** (数字大的优先) 排列。
     *   依次遍历排序后的 `Matcher`：
-        *   检查 `event_data` 是否 **同时满足** 该 `Matcher` 在 `on_event` 的 `rules` 参数中定义的所有 **初始规则**。
+        *   检查 `event_data` 是否 **同时满足** 该 `Matcher` 在 `on_event` 的 `rules` 参数中定义的所有 **初始规则** (列表中的规则是 AND 关系，每个规则可以是简单规则或由 `&`/`|` 组合的复合规则)。
         *   如果 **全部满足**，则进入该 `Matcher` 的内部 Handler 筛选阶段。
         *   如果不满足，则跳过此 `Matcher`，继续检查（针对当前事件对象的）下一个 `Matcher`。
 3.  **Handler 筛选与执行:**
     *   对于通过了初始规则筛选的 `Matcher`，框架获取其下所有通过 `register_handler` 注册的 `Handler` 函数。
     *   这些 `Handler` 按照它们在 `register_handler` 中设置的 `priority` **降序** (数字大的优先) 排列。
     *   依次遍历排序后的 `Handler`：
-        *   **创建副本与规则匹配:** 创建一个 `event_data` 的 **副本**。检查这个副本是否 **同时满足** 该 `Handler` 在 `register_handler` 的 `rules` 参数中定义的所有 **附加规则**。规则（如 `CommandRule`）可能会修改这个副本。
+        *   **创建副本与规则匹配:** 创建一个 `event_data` 的 **副本**。检查这个副本是否 **同时满足** 该 `Handler` 在 `register_handler` 的 `rules` 参数中定义的所有 **附加规则** (同样，列表中的规则是 AND 关系，每个规则可以是简单规则或复合规则)。规则（如 `CommandRule`）可能会修改这个副本。
         *   如果 **全部满足附加规则**：
             *   **依赖注入:** 检查 Handler 函数签名，如果包含 `state`, `user_state`, 或 `group_state`，则调用 `StateManager.get_state` 获取相应的状态数据，并准备注入。
             *   **执行:** 框架将此 `Handler` 函数提交到 **线程池** 中执行，并将（可能已被规则修改过的） `event_data` 副本、注入的状态数据以及静态 `*args`, `**kwargs` 传递给它。
@@ -487,7 +525,8 @@ user_state_manual["data"]["last_command"] = "/status"
 **核心要点:**
 
 *   优先级决定顺序：先比 `Matcher` 优先级，再比同一 `Matcher` 内的 `Handler` 优先级。
-*   规则层层过滤：`on_event` 规则先过滤，`register_handler` 规则再过滤。
+*   规则层层过滤：`on_event` 规则先过滤，`register_handler` 规则再过滤。`rules` 列表中的规则默认是 AND 关系。
+*   **推荐使用 `&` 和 `|` 运算符来组合规则**，使代码更简洁易读。
 *   **`return True` 仅阻断当前 Matcher 内后续 Handler 的执行，不影响其他 Matcher。**
 *   规则（尤其是 `CommandRule`）可能会修改传递给 Handler 的 `event_data` 副本。
 *   判断事件来源（群聊/私聊）应检查 `event_data.message_type` 字段。
@@ -502,7 +541,7 @@ from Lib.core import PluginManager
 import random
 
 # --- 插件信息 ---
-plugin_info = PluginManager.PluginInfo(
+plugin_info = PluginManager.PluginInfo( # 假设 PluginInfo 存在
     NAME="示例插件Pro",
     AUTHOR="Xiaosu",
     VERSION="1.1",
@@ -517,7 +556,8 @@ repeat_rule = EventHandlers.CommandRule("repeat", aliases={"复读"})
 repeat_matcher = EventHandlers.on_event(
     EventClassifier.GroupMessageEvent, # 明确只监听群消息
     priority=10,
-    rules=[repeat_rule]
+    rules=[repeat_cmd_rule] # 直接使用 CommandRule
+    # 如果有其他条件，可以这样： rules=[repeat_cmd_rule & other_condition_rule]
 )
 
 # 这个 Handler 请求 'state' (即 g<group_id>_u<user_id> 的状态)
@@ -557,7 +597,7 @@ status_rule = EventHandlers.CommandRule("status", no_args=True)
 status_matcher = EventHandlers.on_event(
     EventClassifier.MessageEvent, # 监听所有消息类型
     priority=5,
-    rules=[EventHandlers.to_me, status_rule] # 必须是发给我的 status 命令
+    rules=[to_me & status_cmd_rule] # 必须是发给我的 status 命令
 )
 
 # 这个 Handler 请求 user_state
