@@ -38,6 +38,7 @@ export default defineConfig({
                 text: '深入',
                 items: [
                     { text: '事件处理', link: '/advanced/event-handlers' },
+                    { text: '命令管理器', link: '/advanced/command-manager' },
                     { text: '事件管理器', link: '/advanced/event-manager' },
                     { text: '操作', link: '/advanced/actions' },
                     { text: '富文本', link: '/advanced/rich-text' },

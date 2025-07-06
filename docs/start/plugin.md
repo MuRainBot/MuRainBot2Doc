@@ -2,114 +2,123 @@
 
 ## 开始之前
 
-在开始编写插件之前，你需要对 MRB2 的插件系统有一些了解
+在开始编写插件之前，你需要对 MRB2 的插件系统有一些了解。
 
-MRB2 的插件放在 `/plugins` 目录下，每个插件既可以是一个文件夹（ python 库，必须有 `__init__.py` 文件）也可以是一个 python 文件（.py文件）。
+MRB2 的插件都存放在项目根目录下的 `/plugins` 文件夹中。一个插件既可以是一个独立的 Python 文件（例如 `echo.py`），也可以是一个 Python 包（一个包含 `__init__.py` 文件的文件夹）。
 
 详情可以查看 [PluginManager文档](/advanced/plugin-manager)。
 
-所以，你可以先在 `/plugins` 目录下创建一个名为 HelloWorld 的文件夹，并添加一个 `__init__.py` 的文件，下面的所有代码都是在这个文件内编写的作为你的第一个插件。
+现在，请在你的项目 `/plugins` 目录下创建一个名为 `Echo` 的文件夹，并在其中创建一个 `__init__.py` 文件。我们接下来的所有代码都将在这个文件中编写。
 
-在这个插件里，你需要实现收到 hello 回复 HelloWorld! 的功能。
+我们将要实现的插件功能是：当用户发送 `echo <内容>` 时，机器人将同样回复 `<内容>`。
 
 ## 开始编写
 
-首先，导入 MRB2 的 Lib。
+### 1. 导入框架并声明插件信息
+
+首先，在 `__init__.py` 文件中，我们需要导入 `murainbot` 框架，并声明插件的基本信息。
+
+**请务必将 `plugin_info` 的声明紧跟在 import 语句之后**，这是框架识别插件信息的关键。
 
 ```python
-from Lib import *
-```
-
-然后声明一下这个插件的一些信息（请一定一定一定把 plugin_info 放在插件导入完 Lib 后的最前面）：
-
-```python
-from Lib.core import PluginManager
+from murainbot import CommandManager, QQRichText
+from murainbot.core import PluginManager
 
 plugin_info = PluginManager.PluginInfo(
-    NAME="插件名称",
-    AUTHOR="作者",
-    VERSION="版本号",
-    DESCRIPTION="描述",
-    HELP_MSG="帮助文本"
+    NAME="Echo",
+    AUTHOR="你的名字",
+    VERSION="1.0.0",
+    DESCRIPTION="一个简单的复读插件",
+    HELP_MSG="发送 echo <内容>，我会复读你的话"
 )
 ```
 
-随后你需要创建一个 `matcher`，用来匹配事件，这里匹配`EventClassifier.MessageEvent`事件。
-
-为了实现命令回复的效果，所以需要先创建一个 `Rule` 来约束 `matcher` 匹配的事件。
-
-```python
-rule = EventHandlers.CommandRule("hello", aliases={"你好"})
-```
-
-上方 `Rule` 的意思是，是判断 message 是否是 `hello`，同时设置了一个别名 `你好`。
-
 ::: tip
-**CommandRule 快速说明**
+在一个python包格式的插件中，plugin_info只需要声明一次，推荐放在__init__.py中声明
 
-1. **自动匹配命令**
-   - 默认匹配：`命令起始符 + 命令` 和 `命令起始符 + 别名`。  (在默认情况下，命令起始符为 `["/"]`)
-   - 若消息前带有 `@bot` 时，可直接匹配 **命令本身** 和 **别名**，无需命令起始符。
-
-2. **自动处理**
-   - 自动移除消息中的 `@bot` 和命令起始符，同时会自动将 **别名** 替换为 **命令本身**，以简化插件处理逻辑。
-
-3. **避免误判**
-   - 在 `matcher` 的 `rules` 中添加 `EventClassifier.to_me` 规则，限制仅匹配群消息 `@bot` 或私聊 bot 的消息。  
-   - 确保 `EventClassifier.to_me` 放在 `CommandRule` 前，以正确识别顺序。
-
-详情查看 [EventHandlers.CommandRule](/advanced/event-handlers#commandrule-%E6%9E%81%E5%85%B6%E5%B8%B8%E7%94%A8)。
+如果不在__init__.py内，请确保可以通过<插件名称>.plugin_info访问到你的plugin_info
 :::
 
-然后使用 `Rule` 创建 `matcher`。
+### 2. 创建命令匹配器
+
+接下来，我们需要创建一个“匹配器” (Matcher) 来监听特定的命令。我们使用 `CommandManager.on_command()` 来实现。
 
 ```python
-matcher = EventHandlers.on_event(EventClassifier.GroupMessageEvent, rules=[rule])
+# 监听 "echo" 命令，并设置别名为 "复读"
+matcher = CommandManager.on_command("echo", aliases={"复读"})
 ```
 
-接下来，要为这个`matcher`创建一个`handler`用于处理这个事件。
+::: tip **on_command 做了什么？**
 
-```python
-@matcher.register_handler()
-def handler(event: EventClassifier.GroupMessageEvent):
-    ...
-```
+`on_command()` 是一个非常方便的工具，它为你处理了大部分繁琐的命令判断工作：
 
-关于 `EventHandlers` 的详情，可以查看 [相关文档](/advanced/event-handlers)。
+1.  **自动匹配命令**：
+    *   它会自动匹配 `命令起始符 + 命令` (如 `/echo`) 和 `命令起始符 + 别名` (如 `/复读`)。默认的命令起始符是 `/`，可在 `config.yml` 中修改。
+    *   在群聊中，如果消息以 `@机器人` 开头，那么后面的命令无需加起始符（如 `@机器人 echo ...`）。
 
-随后，需要将 HelloWorld 消息发送出去。
+2.  **自动预处理**：
+    *   它会自动剥离消息中的 `@机器人` 和命令起始符，让你能专注于处理核心的命令内容。
 
-众所周知，在 QQ 中，不止有纯文本消息，一个消息内可以包含图片、语音等，所以你需要使用 `QQRichText` 模块来将构建消息。
-
-`QQRichText` 模块内包含了全部 Onebot11 协议内的消息段并将它们封装成了类，在现在这个插件中，我们只需要使用 `QQRichText.Text` 来构建纯文本消息。
-
-关于 `QQRichText` 详情可以查看 [相关文档](/advanced/rich-text)。
-
-在 MRB2 中，发送消息等这类操作被称为 `Action`，MRB2 将 Onebot11 协议中所有的 API 都封装成了 Action ，你只需要实例化他们并 `.call()` 调用即可。
-
-顺带一提，`Action` 不止可以 `.call()` 调用，还有许多种调用方法，但这些就留到[后面的章节](/advanced/actions)再讲吧。
-
-由于发送群消息和发送私聊消息并不是一个操作，所以你需要加一个判断。
-
-```python
-@matcher.register_handler()
-def handler(event: EventClassifier.GroupMessageEvent):
-    # [!code focus:4]
-    Actions.SendMsg(
-        group_id = event.group_id,
-        message = QQRichText.QQRichText(QQRichText.Text("HelloWorld!"))
-    ).call()
-```
-
-至此，恭喜你已经完成了你第一个插件的编写，你现在可以启动 MRB2 来尝试一下效果。
-
-
-::: tip
-此处我们监听的是群消息事件，所以只能在群聊中触发这个对话
-
-以及由于默认的命令起始符为 `["/"]` 所以你需要使用 `/hello` 和 `/你好` 来触发这个对话，而非 `hello` 和 `你好`，
-如果需要更改可以修改框架的配置文件，或者在实例化 `CommandRule` 的时候传入 `command_start` 参数。
+这使得你的插件代码可以更加简洁和清晰。
 :::
 
+### 3. 编写命令处理器
 
-### 更进一步：你可以尝试阅读边栏 深入 板块的内容以更好的了解每个模块如何使用，或边阅读[APIDoc](https://mrb2api.xiaosu.icu)，边开始你下个插件的开发。
+有了匹配器，我们还需要一个“处理器” (Handler) 函数来处理匹配到的命令。这通过装饰器 `@matcher.register_command()` 来实现。
+
+我们的命令格式是 `echo <内容>`，其中 `<内容>` 是我们需要的参数。我们可以使用 `CommandManager` 提供的参数类型来定义它。
+
+```python
+# 使用 f-string 定义命令的参数部分
+# CommandManager.GreedySegments('text') 会捕获所有剩余的内容
+@matcher.register_command(f"echo {CommandManager.GreedySegments('text')}")
+def handler(event: CommandManager.CommandEvent, text: QQRichText.QQRichText):
+    # 使用 event.reply() 可以快速回复消息
+    event.reply(text)
+```
+
+这段代码是新版框架的核心！让我们来解析一下：
+
+-   `@matcher.register_command(...)`: 这个装饰器将下面的 `handler` 函数注册为 `echo` 命令的具体处理器。
+-   `echo`: 这是必须的，框架需要完整的命令定义，必须包含名称。
+-   `CommandManager.GreedySegments('text')`: 这是一个特殊的参数类型，意思是“**贪婪地捕获所有剩余的消息段，并将其命名为 `text`**”。
+-   `def handler(event: CommandManager.CommandEvent, text: QQRichText.QQRichText):`:
+    -   **`event: CommandManager.CommandEvent`**: 这是框架传入的事件对象，它继承自消息事件，并增加了一些命令相关的便捷方法，比如 `reply()`。
+    -   **`text: QQRichText.QQRichText`**: 这就是**依赖注入**的魔力！框架看到处理器需要一个名为 `text` 的参数，它会自动将上面 `GreedySegments('text')` 捕获到的内容作为 `QQRichText` 对象传递给这个参数。你无需手动解析消息。
+-   `event.reply(text)`: `CommandEvent` 对象提供的便捷方法，可以直接引用并回复触发该命令的消息。
+
+### 4. 最终代码
+
+整合起来，你的 `plugins/Echo/__init__.py` 文件内容应该是这样的：
+
+```python
+from murainbot import CommandManager, QQRichText
+from murainbot.core import PluginManager
+
+# 1. 声明插件信息
+plugin_info = PluginManager.PluginInfo(
+    NAME="Echo",
+    AUTHOR="你的名字",
+    VERSION="1.0.0",
+    DESCRIPTION="一个简单的复读插件",
+    HELP_MSG="发送 /echo <内容>，我会复读你的话"
+)
+
+# 2. 创建命令匹配器
+matcher = CommandManager.on_command("echo", aliases={"复读"})
+
+# 3. 注册命令处理器并定义参数
+@matcher.register_command(f"echo {CommandManager.GreedySegments('text')}")
+def handler(event: CommandManager.CommandEvent, text: QQRichText.QQRichText):
+    """
+    处理 echo 命令, text 参数由框架通过依赖注入自动传入
+    """
+    # 4. 执行回复操作
+    event.reply(text)
+```
+
+至此，恭喜你已经完成了第一个插件的编写！现在可以启动 MRB2，然后对你的机器人发送 `/echo 你好世界` 或者 `/复读 你好世界` 来测试效果了。
+
+### 更进一步
+
+你可以尝试阅读侧边栏 **深入** 板块的内容，以更好地了解每个模块如何使用；或者一边阅读 [**API文档**](https://mrb2api.xiaosu.icu)，一边开始你下一个插件的开发。祝你玩得开心！

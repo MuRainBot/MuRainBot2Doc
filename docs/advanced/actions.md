@@ -1,9 +1,9 @@
 # 操作 (Actions)
 
 `Actions` 模块是 MuRainBot2 (MRB2) 框架中用于与 OneBot V11 API 进行交互的标准方式。它将每一个 OneBot API 调用封装成一个独立的 `Action` 类，提供了统一的调用接口、结果处理、异步执行和回调机制，极大地简化了插件与机器人核心功能的交互。
-p.s. 是对 `Lib.core.OnebotAPI.py` 的二次封装。
+p.s. 是对 `murainbot.core.OnebotAPI.py` 的二次封装。
 
-该模块位于 `Lib.utils.Actions.py`。
+该模块位于 `murainbot.utils.Actions.py`。
 
 ## 核心概念
 
@@ -170,7 +170,7 @@ elif result.is_err:
 ## 完整示例
 
 ```python
-from Lib import *
+from murainbot import *
 import time
 
 # --- 插件信息 ---

@@ -2,16 +2,16 @@
 
 `PluginManager` 模块是 MuRainBot (MRB2) 框架的核心组件，负责发现、加载、管理和存储框架中的所有插件。它定义了插件的基本结构、元数据表示方式，并提供了插件间依赖管理的功能。
 
-该模块位于 `Lib.core.PluginManager.py`。
+该模块位于 `murainbot.core.PluginManager.py`。
 
 **常用导入 (在插件文件中):**
 
 ```python
 # 导入 PluginManager 以定义 plugin_info 或声明依赖
-from Lib.core import PluginManager
+from murainbot.core import PluginManager
 
-# 通常也需要导入其他 Lib 组件
-from Lib import *
+# 通常也需要导入其他 murainbot 组件
+from murainbot import *
 ```
 
 ## 核心概念
@@ -30,7 +30,7 @@ from Lib import *
 每个插件都需要通过 `PluginManager.PluginInfo` 类来声明其元数据。这个定义 **必须** 放在插件文件的靠前位置，紧跟在 `import` 语句之后。
 
 ```python
-from Lib.core import PluginManager
+from murainbot.core import PluginManager
 # 其他导入...
 
 plugin_info = PluginManager.PluginInfo(
@@ -45,7 +45,7 @@ plugin_info = PluginManager.PluginInfo(
 )
 
 # --- 插件的其他代码 ---
-# from Lib import Actions, EventHandlers, ...
+# from murainbot import Actions, EventHandlers, ...
 # ... matcher 定义 ...
 # ... handler 定义 ...
 ```
@@ -66,7 +66,7 @@ plugin_info = PluginManager.PluginInfo(
 ## 插件加载过程
 
 1.  **发现:** MRB2 启动时扫描 `/plugins` 目录，找到所有 `.py` 文件和包含 `__init__.py` 的目录，将它们记录在内部的 `found_plugins` 列表中。
-2.  **导入:** 遍历 `found_plugins`，计算每个插件的 Python 导入路径 (例如 `plugins.MyPluginFolder` 或 `plugins.my_plugin`)，并使用 `importlib.import_module` 尝试导入插件模块。
+2.  **导入:** 遍历 `found_plugins`，计算每个插件的 Python 导入路径 (例如 `plugins.MyPluginFolder` 或 `plugins.my_plugin`)，并使用 `importmurainbot.import_module` 尝试导入插件模块。
 3.  **获取 `plugin_info`:** 从导入的模块中查找 `plugin_info` 属性。
 4.  **实例化 `PluginInfo`:** 如果找到 `plugin_info`，框架会访问它（这会触发 `PluginInfo` 的 `__post_init__`）。
 5.  **检查 `ENABLED`:** `PluginInfo.__post_init__` 检查 `ENABLED` 字段。如果为 `False`，则抛出 `NotEnabledPluginException`，加载流程对该插件终止。
@@ -86,7 +86,7 @@ MuRainBot2 插件化系统的设计使得插件之间可以功能独立、各司
 假设我们有一个插件 `plugin_a`，它需要依赖另一个插件 `plugin_b` 提供的功能，那么我们可以在 `plugin_a` 的代码中（通常在 `plugin_info` 定义之后，实际使用依赖功能之前）声明依赖关系：
 
 ```python
-from Lib.core import PluginManager
+from murainbot.core import PluginManager
 # 其他导入...
 
 plugin_info = PluginManager.PluginInfo(...) # plugin_a 的信息
@@ -147,7 +147,7 @@ except Exception as e:
 这是一个工具函数，用于确定当前代码执行点的调用者属于哪个插件。它通过检查 Python 的调用栈来实现。
 
 ```python
-from Lib.core import PluginManager
+from murainbot.core import PluginManager
 
 def utility_function():
     # 这个函数可能被不同的插件调用
@@ -173,7 +173,7 @@ def utility_function():
     *   如果找到了调用者所属的插件，返回该插件在 `found_plugins` 中的信息字典。
     *   如果没有找到（例如调用来自框架核心代码或其他非插件目录），返回 `None`。
 
-**主要用途:** 这个函数主要被框架内部的其他工具（例如 `Lib.utils.PluginConfig` 可能用它来确定配置文件的名称）或需要根据调用插件上下文提供不同行为的共享库使用。普通插件开发者直接使用它的场景可能不多。
+**主要用途:** 这个函数主要被框架内部的其他工具（例如 `murainbot.utils.PluginConfig` 可能用它来确定配置文件的名称）或需要根据调用插件上下文提供不同行为的共享库使用。普通插件开发者直接使用它的场景可能不多。
 
 ## 已弃用的 `run_plugin_main`
 

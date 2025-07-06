@@ -123,7 +123,7 @@ MyProtocol实现端扩展插件
 实际的协议转换由外部兼容层负责。
 """
 
-from Lib.core import PluginManager
+from murainbot.core import PluginManager
 
 plugin_info = PluginManager.PluginInfo(
     NAME="MyProtocolExtension",
@@ -161,9 +161,9 @@ Tips: 这里的定义仅为示例，实际的API名称和参数取决于你的�
 
 from typing import Callable
 
-from Lib.core import OnebotAPI # 用于调用OneBot协议的API
-from Lib import Actions       # 继承Actions.Action
-from Lib.utils import Logger
+from murainbot.core import OnebotAPI # 用于调用OneBot协议的API
+from murainbot import Actions       # 继承Actions.Action
+from murainbot.utils import Logger
 
 logger = Logger.get_logger()
 
@@ -215,8 +215,8 @@ MyProtocol的一些拓展事件
 """
 from typing import TypedDict
 
-from Lib.utils import EventClassifier, Logger
-from Lib.core import Event
+from murainbot.utils import EventClassifier, Logger
+from murainbot.core import Event
 
 logger = Logger.get_logger()
 
@@ -264,7 +264,7 @@ MyProtocol的拓展消息段
 用于处理 OneBot v11 标准中没有的自定义消息段。
 """
 
-from Lib.utils import QQRichText # 消息段通常继承自QQRichText.Segment
+from murainbot.utils import QQRichText # 消息段通常继承自QQRichText.Segment
 
 # 示例：商城表情消息段（参考Lagrange）
 class MFace(QQRichText.Segment):

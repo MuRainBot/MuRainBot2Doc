@@ -2,16 +2,16 @@
 
 `EventManager` 模块是 MuRainBot (MRB2) 框架的基础设施之一，负责管理事件的定义、监听器的注册与注销，以及事件的触发和分发。它提供了一个灵活的发布-订阅模式，允许框架的不同部分或插件之间通过事件进行解耦通信。
 
-该模块位于 `Lib.core.EventManager.py`。
+该模块位于 `murainbot.core.EventManager.py`。
 
 **常用导入 (在插件或框架内部):**
 
 ```python
 # 通常由框架核心或需要定义/监听自定义事件的模块导入
-from Lib.core import EventManager
+from murainbot.core import EventManager
 
 # 导入特定的事件类 (如果是监听预定义事件)
-# from Lib.EventClassifier import SomeSpecificEvent
+# from murainbot.EventClassifier import SomeSpecificEvent
 ```
 
 ## 核心概念
@@ -27,7 +27,7 @@ from Lib.core import EventManager
 要定义自己的事件类型，只需创建一个继承自 `EventManager.Event` 的类。通常，你会在 `__init__` 方法中添加该事件需要携带的数据作为实例属性。
 
 ```python
-from Lib.core import EventManager
+from murainbot.core import EventManager
 from typing import Any
 
 # 示例：定义一个插件加载完成的事件
@@ -59,8 +59,8 @@ class TaskEndEvent(EventManager.Event):
 使用 `@EventManager.event_listener` 装饰器将一个函数注册为特定事件类型的监听器。
 
 ```python
-from Lib.core import EventManager
-from Lib import Logger # 假设需要日志
+from murainbot.core import EventManager
+from murainbot import Logger # 假设需要日志
 
 # (假设上面的事件类已定义)
 
@@ -168,12 +168,12 @@ print("异步事件已提交，主程序继续执行...")
     *   `listener`: 即将要被执行的 `EventListener` 数据类实例 (包含原始监听器的 `func`, `priority`, `kwargs`)。
 *   **`Hook` 监听器的返回值:** 如果一个 `Hook` 监听器返回 `True`，则原始事件 (`hook.event`) 的那个特定监听器 (`hook.listener`) 将被 **跳过**，不会执行。
 
-**主要用途:** 这个机制主要被框架内部使用，例如 `Lib.EventHandlers` 可能使用它来拦截 OneBot 事件，应用自己的规则，并在规则不匹配时返回 `True` 来阻止后续的低优先级 `EventManager` 监听器（如果存在的话）执行。插件开发者通常 **不需要** 主动监听 `Hook` 事件。不过，对于一些例如统一的群管理插件，`Hook` 系统就变得很有用了，但是也需要谨慎的编写相关逻辑。
+**主要用途:** 这个机制主要被框架内部使用，例如 `murainbot.EventHandlers` 可能使用它来拦截 OneBot 事件，应用自己的规则，并在规则不匹配时返回 `True` 来阻止后续的低优先级 `EventManager` 监听器（如果存在的话）执行。插件开发者通常 **不需要** 主动监听 `Hook` 事件。不过，对于一些例如统一的群管理插件，`Hook` 系统就变得很有用了，但是也需要谨慎的编写相关逻辑。
 
 ```python
 # (假设 CounterEvent 和 on_counter_low_priority 已定义)
-from Lib.core import EventManager
-from Lib import Logger
+from murainbot.core import EventManager
+from murainbot import Logger
 
 logger = Logger.get_logger()
 
@@ -198,8 +198,8 @@ counter_event_hooked.call() # 现在只会打印 P100 的消息
 如果你需要动态地移除一个事件监听器，可以使用 `EventManager.unregister_listener` 函数。
 
 ```python
-from Lib.core import EventManager
-from Lib import Logger
+from murainbot.core import EventManager
+from murainbot import Logger
 # (假设 MyCustomEvent 和 my_listener_func 已定义并注册)
 
 logger = Logger.get_logger()
@@ -243,8 +243,8 @@ except TypeError as e:
 ## 完整示例
 
 ```python
-from Lib.core import EventManager, ThreadPool
-from Lib import Logger
+from murainbot.core import EventManager, ThreadPool
+from murainbot import Logger
 from typing import Any
 import time
 

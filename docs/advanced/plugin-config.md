@@ -23,4 +23,4 @@ config = PluginConfig.PluginConfig(default_config="""# 插件xxx配置文件
 config.get("key")
 ```
 
-具体用法可以查看源码或API文档：[PluginConfig](https://mrb2api.xiaosu.icu/Lib/utils/PluginConfig.html)
+具体用法可以查看源码或API文档：[PluginConfig](https://mrb2api.xiaosu.icu/murainbot/utils/PluginConfig.html)

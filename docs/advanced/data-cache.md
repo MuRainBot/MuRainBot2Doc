@@ -2,7 +2,7 @@
 
 `QQDataCacher` 模块是 MuRainBot2 (MRB2) 框架的一个用于获取QQ信息工具。它的主要目的是缓存通过 OneBot API 获取的用户信息、群信息和群成员信息，以减少对 OneBot 实现端 的重复 API 调用，从而提高响应速度并降低 API 调用频率，并提供方便的接口，供开发者使用。
 
-该模块位于 `Lib.utils.QQDataCacher.py`。
+该模块位于 `murainbot.utils.QQDataCacher.py`。
 
 ## 核心概念
 
@@ -201,7 +201,7 @@ else:
 ## 完整示例：在事件响应中使用缓存
 
 ```python
-from Lib import *
+from murainbot import *
 
 # --- 插件信息 ---
 plugin_info = PluginManager.PluginInfo(NAME="Cache示例")
