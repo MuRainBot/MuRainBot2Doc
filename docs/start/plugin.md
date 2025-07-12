@@ -83,7 +83,7 @@ def handler(event: CommandManager.CommandEvent, text: QQRichText.QQRichText):
         # 而获取键的语法是直接相当于从事件中取，所以需要这么写
         user = QQDataCacher.get_group_member_info(event["group_id"], event.user_id)
     # 生成回复文本
-    message = QQRichText.QQRichText(f"{user.get_nickname()} 发送了：", text)
+    message = QQRichText.QQRichText(QQRichText.Text(f"{user.get_nickname()} 发送了："), text)
     # 使用 event.reply() 可以快速回复消息
     event.reply(message)
 ```
@@ -98,7 +98,7 @@ def handler(event: CommandManager.CommandEvent, text: QQRichText.QQRichText):
     -   **`text: QQRichText.QQRichText`**: 这就是**依赖注入**的魔力！框架看到处理器需要一个名为 `text` 的参数，它会自动将上面 `GreedySegments('text')` 捕获到的内容作为 `QQRichText` 对象传递给这个参数。你无需手动解析消息。
 -   `event.is_private`: 判断消息是否为私聊
 -   `QQDataCacher.get_user_info(event.user_id)`：从事件中拿出 `user_id`，然后通过 `QQDataCacher` 来获取用户信息
--   `message = QQRichText.QQRichText(f"{user.get_nickname()} 发送了：", text)`：使用 `QQRichText` 创建回复文本
+-   `message = QQRichText.QQRichText(QQRichText.Text(f"{user.get_nickname()} 发送了："), text)`：使用 `QQRichText` 创建回复文本，它非常强大，可以传入多种类型的消息段，直接提供文本会被自动进行CQ解析，所以为了避免被注入攻击，所以此处需要使用 `QRichText.Text`，这个消息段是仅文本的，会进行转义（在被转换为cq码时）。
 -   `event.reply(message)`: `CommandEvent` 对象提供的便捷方法，可以直接引用并回复触发该命令的消息。
 
 ### 4. 最终代码
@@ -137,7 +137,7 @@ def handler(event: CommandManager.CommandEvent, text: QQRichText.QQRichText):
         # 而获取键的语法是直接相当于从事件中取，所以需要这么写
         user = QQDataCacher.get_group_member_info(event["group_id"], event.user_id)
     # 5. 生成回复文本
-    message = QQRichText.QQRichText(f"{user.get_nickname()} 发送了：", text)
+    message = QQRichText.QQRichText(QQRichText.Text(f"{user.get_nickname()} 发送了："), text)
     # 6. 执行回复操作
     event.reply(message)
 ```
