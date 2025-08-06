@@ -23,7 +23,7 @@ def handle_rich_test(event: CommandManager.CommandEvent):
     message_to_send = QQRichText.QQRichText(
         QQRichText.Reply(event.message_id),  # 回复触发命令的消息
         QQRichText.At(event.user_id),        # @ 发送者
-        " 你好！这是一条包含多种元素的消息：\n", # 字符串会自动转为 Text 段
+        " 你好！这是一条包含多种元素的消息：\n[CQ:video,file=https://www.example.com/video.mp4]", # 字符串会自动按照CQCode 格式解析为消息段
         QQRichText.Face(178),                # QQ 系统表情
         QQRichText.Image("https://www.example.com/logo.png") # 网络图片
     )
@@ -75,7 +75,7 @@ def handle_rich_test(event: CommandManager.CommandEvent):
 如开篇示例所示，`QQRichText` 的构造函数非常灵活，可以接受多种类型的输入：
 
 -   **单个或多个 `Segment` 对象**: `QQRichText(QQRichText.Text("你好"), QQRichText.At(123))`
--   **字符串**: 会被自动解析为 CQ Code 和文本段。`QQRichText("[CQ:at,qq=123] 你好")`
+-   **字符串**: 会被自动按 CQ Code 解析: `QQRichText("[CQ:at,qq=123] 你好")` 目前 MRB2 的 CQ Code 解析器非常严格，请注意格式，不推荐使用，并且如果输入内容可能不安全，且仅需文本，请使用 `QQRichText.Text()` 来创建。
 -   **`Segment` 对象的列表或元组**: `QQRichText([QQRichText.Text("..."), ...])`
 -   **消息段数组**: `QQRichText([{'type': 'text', 'data': {'text': '...'}}, ...])`
 -   **混合以上所有类型**: `QQRichText(QQRichText.Reply(123), "请看图：", [CQ:image,...])`
@@ -84,8 +84,8 @@ def handle_rich_test(event: CommandManager.CommandEvent):
 ### 主要方法和属性
 
 -   **`add(*segments)`**:
-    -   向当前 `QQRichText` 对象的末尾追加一个或多个消息段。
-    -   `message.add(QQRichText.Text("..."), QQRichText.Face(1))`
+    -   向当前 `QQRichText` 对象的末尾追加一个或多个消息段，同时返回self，可以链式调用。
+    -   `message.add(QQRichText.Text("..."), QQRichText.Face(1)).add(QQRichText.At(1))`
 
 -   **`__str__()`**:
     -   将 `QQRichText` 对象转换为 **CQ Code 字符串**。非常适合用于日志记录和调试。
@@ -93,12 +93,15 @@ def handle_rich_test(event: CommandManager.CommandEvent):
 
 -   **`get_array() -> list[dict]`**:
     -   **重要方法**。返回符合 OneBot 标准的消息段数组格式。
-    -   当你需要手动调用 `Actions.SendMsg` 等底层 API 时，这个方法非常有用。不过，通常情况下，`event.reply/send` 和 `CommandManager` 会自动处理转换，你只需传递 `QQRichText` 对象即可。
+    -   当你需要手动调用底层 API 时，这个方法非常有用。不过，通常情况下，`event.reply/send` 和 `CommandManager` 会自动处理转换，你只需传递 `QQRichText` 对象即可。
 
 -   **`render(group_id=None)`**:
     -   生成一个**人类可读**的字符串，会尝试将 `@` 显示为昵称，将图片/语音等显示为 `[类型: 描述]`。
-    -   **主要用于日志和控制台输出，不用于发送消息**。
+    -   **主要用于日志和控制台输出，不同于CQ Code，不可用于发送消息和反向转换**。
+    -   其的目的主要是为了解决 CQ Code 的各种转码导致你想打开图片都得加载转码的问题。
     -   `logger.info(f"收到消息: {event.message.render(event.group_id)}")`
+-   **`strip()`**:
+    -   移出像消息段开头和结尾的可能的Text消息段开头和结尾的空格和换行，然后返回一个新的 `QQRichText` 对象。
 
 ### 操作符重载
 
@@ -109,6 +112,8 @@ def handle_rich_test(event: CommandManager.CommandEvent):
     combined_rt = rt1 + rt2 + " Part 3"
     ```
 -   **`==` (等于)**: 比较两个 `QQRichText` 对象的内部消息段列表是否完全相同。
+-   **`[index]` (索引)**: 返回索引处的消息段。
+-   **bool**: 如果 `QQRichText` 对象为空，则返回 False。否则返回 True。
 
 ## `Segment` 类：消息的基本单元
 
@@ -119,7 +124,7 @@ def handle_rich_test(event: CommandManager.CommandEvent):
 *   **`Image(file: str)`**: 图片。`file` 参数可以是：
     *   本地绝对路径: `"/home/user/img.png"` (会自动转为 `file:///...`)
     *   网络 URL: `"http://example.com/image.jpg"`
-    *   Base64 编码: `"base64://..."`
+    *   Base64 编码: `"base64://..."`，需要注意的是部分实现段对消息段长度有限制，Base64可能过长导致发送失败
 
 *   **`At(qq: int | str)`**: @某人。`qq` 参数可以是 QQ 号，或 `"all"` (需机器人有权限)。
 
@@ -142,6 +147,8 @@ def handle_rich_test(event: CommandManager.CommandEvent):
 *   **`Forward(forward_id: str)`**: 用于发送已存在的合并转发记录。
 
 *   **`XML(data: str)`** / **`JSON(data: str)`**: XML/JSON 卡片消息。
+
+剩余的封装请看 [Onebot11协议原文](https://github.com/botuniverse/onebot-11/blob/master/message/segment.md)和MRB2代码
 
 ## 工具函数
 
